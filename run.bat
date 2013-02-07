@@ -1,0 +1,1 @@
+"C:/Program Files/Nodejs/node.exe" server.js
