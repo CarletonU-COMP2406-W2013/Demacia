@@ -1,0 +1,15 @@
+{
+  "name": "DemaciaTV",
+  "description": "TwitchTV multi-stream viewer",
+  "version": "0.0.1",
+  "private": true,
+  "keywords": ["stream", "streaming", "twitch", "twitchtv", "viewer", "gaming", "esports", "league of legends", "starcraft"],
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "express": "3.1.0",
+    "jade": "*",
+    "stylus": "*"
+  }
+}
