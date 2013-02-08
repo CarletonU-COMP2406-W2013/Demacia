@@ -1,0 +1,22 @@
+script(src='https://ttv-api.s3.amazonaws.com/twitch.min.js')
+script(type='text/javascript')
+	$(function() {
+		Twitch.init({clientId: 'j0yll37nxeynttp6x4jb9sj4d4v9ev3'}, function(error, status) {
+			if (error) {
+				// error encountered while loading
+				console.log(error);
+			}
+			// the sdk is now loaded
+			if (status.authenticated) {
+				// already logged in, hide button
+				$('.twitch-connect').hide()
+			}
+		})
+		
+		// Make the button work
+		$('.twitch-connect').click(function() {
+			Twitch.login({
+				scope: ['user_read', 'channel_read']
+			});
+		})
+	});
