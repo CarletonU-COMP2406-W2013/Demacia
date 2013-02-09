@@ -22,4 +22,14 @@ $(document).ready(function() {
 			scope: ['user_read', 'channel_read']
 		});
 	})
+	
+	var channel = "steven_bonnell_ii"
+	  , volume = 100
+	  , player = $('#api_player')[0];
+	console.log(player);
+	setTimeout(function(){
+		//player.play_live(channel);
+		player.change_volume(volume);
+	},1000);
+	
 });
