@@ -23,18 +23,24 @@ $(document).ready(function() {
 		});
 	})
 	
-	var player = $('#api_player')[0]
-	  , muted = false;
+	var player = $('#stream_1')[0]
+	  , muted_1 = false;
 	console.log(player);
 	
 	$('p.stream-controls').append('<a href="#" id="soundtoggle">Toggle audio</a>');
 	$('#soundtoggle').click(function() {
-		if(muted) {
+		if(muted_1) {
 			player.unmute();
-			muted = false;
+			muted_1 = false;
 		} else {
 			player.mute();
-			muted = true;
+			muted_1 = true;
 		}
+	});
+	
+	$('p.stream-controls').append('<br /><a href="#" id="streamtoggle"> Toggle stream</a>');
+	$('#streamtoggle').click(function() {
+		$('#stream_1').toggle();
+		$('#chat_1').toggle();
 	});
 });
