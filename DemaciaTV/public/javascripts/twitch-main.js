@@ -10,12 +10,12 @@ $(document).ready(function() {
 			//$('.twitch-connect').hide()
 			//$('.twitch-connect').after('<p>Connected</p>');
 			Twitch.api({method: 'user'}, function(error, user) {
-				$('.twitch-connect').after('<p>Connected as ' + user.name + '</p>');
+				$('.connected').text('Connected as ' + user.display_name);
 			});
 		}
 	})
 	
-	// Make the button work
+	// Make the connect sbutton work
 	$('.twitch-connect').click(function() {
 		Twitch.login({
 			//popup: true,
@@ -23,13 +23,18 @@ $(document).ready(function() {
 		});
 	})
 	
-	var channel = "steven_bonnell_ii"
-	  , volume = 100
-	  , player = $('#api_player')[0];
+	var player = $('#api_player')[0]
+	  , muted = false;
 	console.log(player);
-	setTimeout(function(){
-		//player.play_live(channel);
-		player.change_volume(volume);
-	},1000);
 	
+	$('p.stream-controls').append('<a href="#" id="soundtoggle">Toggle audio</a>');
+	$('#soundtoggle').click(function() {
+		if(muted) {
+			player.unmute();
+			muted = false;
+		} else {
+			player.mute();
+			muted = true;
+		}
+	});
 });

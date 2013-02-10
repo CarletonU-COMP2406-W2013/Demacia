@@ -1,4 +1,5 @@
 extends layout
+include twitch-embed
 
 block scripts
 	include twitch-login-scripts
@@ -6,4 +7,6 @@ block content
 	//h1= title
 	//p Welcome to #{title}
 	include twitch-login-button
-	include twitch-embed
+	mixin twitch-stream(channel='lagtvmaximusblack')
+	mixin twitch-chat(channel='lagtvmaximusblack')
+	p.stream-controls &nbsp;
