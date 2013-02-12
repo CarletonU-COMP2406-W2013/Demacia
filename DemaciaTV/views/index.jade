@@ -7,6 +7,8 @@ block content
 	//h1= title
 	//p Welcome to #{title}
 	include twitch-login-button
-	mixin twitch-stream(channel='bischulol', cindex='1')
-	mixin twitch-chat(channel='bischulol', cindex='1')
-	p.stream-controls &nbsp;
+	p.stream-controls
+		input#picker(type="text")
+		br
+	mixin twitch-stream(channel='riotgames', cindex='1')
+	mixin twitch-chat(channel='riotgames', cindex='1')
