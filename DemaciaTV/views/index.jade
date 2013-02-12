@@ -8,5 +8,7 @@ block content
 	//p Welcome to #{title}
 	include twitch-login-button
 	p.stream-controls
-	mixin twitch-stream(channel='bischulol', cindex='1')
-	mixin twitch-chat(channel='bischulol', cindex='1')
+		input#picker(type="text")
+		br
+	mixin twitch-stream(channel='riotgames', cindex='1')
+	mixin twitch-chat(channel='riotgames', cindex='1')

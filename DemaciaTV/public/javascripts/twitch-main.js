@@ -1,4 +1,22 @@
+var DemaciaTV = function() {
+	return {
+		changeStream: function(channel, cindex) {
+			$('#stream_'+ cindex +' param[name="flashvars"]').attr('value', 'hostname=www.twitch.tv&channel=' 
+				+ channel + '&auto_play=true&enable_javascript=true&start_volume=100');
+			$('#chat_'+ cindex).attr('src', 'http://www.twitch.tv/chat/embed?channel=' 
+				+ channel + '&hide_chat=myspace,facebook,twitter&default_chat=jtv');
+			var stream = $('#stream_1');
+			var chat = $('#chat_1');
+			$('#stream_'+ cindex).remove();
+			$('#chat_'+ cindex).remove();
+			$('.stream-container_'+ cindex).append(stream);
+			$('.chat-container').append(chat);
+		}
+	};
+}();
+
 $(document).ready(function() {
+
 	Twitch.init({clientId: 'j0yll37nxeynttp6x4jb9sj4d4v9ev3'}, function(error, status) {
 		if (error) {
 			// error encountered while loading
@@ -43,4 +61,8 @@ $(document).ready(function() {
 		$('#stream_1').toggle();
 		$('#chat_1').toggle();
 	});
+	
+	$('#picker').keydown(function (e){
+		if(e.keyCode == 13) DemaciaTV.changeStream($('#picker').val(), '1');
+	})
 });
