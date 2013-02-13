@@ -15,11 +15,12 @@ var DemaciaTV = (function () {
       });
     },
     addStream: function(channel, cindex, user) {
-      $('.stream-container_'+cindex).livestream(channel, {
+      $('#stream-container_'+cindex).livestream(channel, {
         width: 600,
         height: 400,
         autoPlay: true,
         startVolume: 100,
+        cindex: cindex,
         //onLive: function(element, streamer) { },
         //onOffline: function(element, streamer) { }
       });
@@ -50,13 +51,11 @@ $(document).ready(function() {
     }
   });
   
-  // Add the stream
+  // Add the default stream and chat
   DemaciaTV.addStream('riotgames', '1', 'Riot Games');
-
-  // Add the chat
   DemaciaTV.addChat('riotgames', '1');
 
-  // Make the connect sbutton work
+  // Make the connect button work
   $('.twitch-connect').click(function() {
     Twitch.login({
       //popup: true,
@@ -64,24 +63,26 @@ $(document).ready(function() {
     });
   });
   
-  var muted_1 = false;
-  //console.log(player);
-  
+  // Sound toggle
+  var container = $('#stream-container_1').data('mute', 'false')
+    , player = $('#stream_1')[0];
+  window.setTimeout(function() { player.unmute(); }, 3000);
   $('p.stream-controls').append('<a href="#" id="soundtoggle">Toggle audio</a>');
   $('#soundtoggle').click(function() {
-    if(muted_1) {
-      $('.stream-container_1 object')[0].unmute();
-      muted_1 = false;
+    if(container.data('mute') === 'true') {
+      player.unmute();
+      container.data('mute', 'false');
     } else {
-      $('.stream-container_1 object')[0].mute();
-      muted_1 = true;
+      player.mute();
+      container.data('mute', 'true');
     }
   });
   
+  // Hider
   $('p.stream-controls').append('<br /><a href="#" id="streamtoggle"> Toggle stream</a>');
   $('#streamtoggle').click(function() {
-    $('.stream-container_1 object').toggle();
-    $('#chat_1').toggle();
+    $('#stream-container_1').toggle();
+    $('#chat-container').toggle();
   });
   
   $('#picker').keydown(function (e){

@@ -30,6 +30,7 @@ Changes:
       autoPlay: true,
       width: 620,
       height: 378,
+      cindex: 1,
       onLive: function(element, streamer) { },
       onOffline: function(element, streamer) { }
     },
@@ -73,13 +74,14 @@ Changes:
       // Build the flash object
       var object = $('<object/>', {
         type: 'application/x-shockwave-flash',
-        id: 'live_embed_player_flash'
+        id: 'stream_' + this.options.cindex
       });
 
       // Specifying these attributes in the hash above does some magical jQuery
       // stuff that we don't want.
       object.attr('height', this.options.height);
       object.attr('width', this.options.width);
+      object.attr('data-mute', 'false');
       object.attr('data', 'http://www.twitch.tv/widgets/live_embed_player.swf?channel=' + streamer);
 
       // Add in the parameters
