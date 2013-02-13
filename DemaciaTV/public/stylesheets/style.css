@@ -1,9 +1,5 @@
-body {
-  padding: 0px;
-  margin: 2px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background: #cccccc;
-}
-a {
-  color: #00b7ff;
-}
+body{padding:0;margin:2px;font:14px "Lucida Grande",Helvetica,Arial,sans-serif;background:#ccc}
+a{color:#00b7ff}
+#chat-container{position:fixed;top:0;right:0;bottom:0;width:300px;text-align:justify;overflow:hidden}
+.stream-error{color:#f00}
+.twitch-chat{width:300px;height:100%}

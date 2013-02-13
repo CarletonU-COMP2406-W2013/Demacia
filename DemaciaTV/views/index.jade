@@ -1,14 +1,17 @@
 extends layout
-include twitch-embed
+//include twitch-embed
 
 block scripts
-	include twitch-login-scripts
+  include twitch-headers
 block content
-	//h1= title
-	//p Welcome to #{title}
-	include twitch-login-button
-	p.stream-controls
-		input#picker(type="text")
-		br
-	mixin twitch-stream(channel='riotgames', cindex='1')
-	mixin twitch-chat(channel='riotgames', cindex='1')
+  //h1= title
+  //p Welcome to #{title}
+  include twitch-login-button
+  p.stream-controls
+    input#picker(type="text")
+    br
+  h1.stream-title
+  div(class="stream-container_1")
+  #chat-container
+  #footer
+  #stream-list
