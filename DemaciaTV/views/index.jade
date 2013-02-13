@@ -6,12 +6,16 @@ block scripts
 block content
   //h1= title
   //p Welcome to #{title}
-  include twitch-login-button
-  p.stream-controls
-    input#picker(type="text")
-    br
-  h1.stream-title
+  #header
+    include twitch-login-button
+    p.stream-controls
+      input#picker(type="text")
+      br
+  //h1.stream-title
   #stream-container_1
+  #stream-container_2
+  #stream-container_3
+  #stream-container_4
   #chat-container
   #footer
   #stream-list
