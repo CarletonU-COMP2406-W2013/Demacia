@@ -30,6 +30,29 @@ var DemaciaTV = (function () {
       $('#chat-container').append('<iframe width="300px" height="100%" id="chat_'
         +cindex+'" scrolling="no" frameborder="0" '+
         'src="http://www.twitch.tv/chat/embed?channel='+channel+'"></iframe>');
+    },
+    toggleChat: function() {
+      var speed = 1000;
+      if($('#header').css('right') === '0px') {
+        $('#chat-container').animate({ width: '300px'}, speed);
+        $('#header').animate({right: '300px'}, speed);
+        $('#content').animate({right: '300px'}, speed);
+        $('#footer').animate({right: '300px'}, speed);
+      } else {
+        $('#chat-container').animate({ width: '0'}, speed);
+        $('#header').animate({right: '0'}, speed);
+        $('#content').animate({right: '0'}, speed);
+        $('#footer').animate({right: '0'}, speed);
+      }
+      window.setTimeout(function() {
+        if($('#chat-toggle-right').is(':visible')){
+          $('#chat-toggle-right').hide();
+          $('#chat-toggle-left').show();
+        } else {
+          $('#chat-toggle-right').show();
+          $('#chat-toggle-left').hide();
+        }
+      }, speed);
     }
   };
 }());
@@ -87,19 +110,11 @@ $(document).ready(function() {
   });
 
   // Slide to close the chat and expand other sections
-  $('p.chat-controls').append('<br /><a href="javascript:void(0)" id="chattoggle"> Toggle chat</a>');
-  $('#chattoggle').click(function() {
-    $('#chat-container').animate({ width: 'toggle'}, 1000);
-    if($('#header').css('right') === '0px') {
-      $('#header').animate({right: '300px'}, 1000);
-      $('#content').animate({right: '300px'}, 1000);
-      $('#footer').animate({right: '300px'}, 1000);
-    } else {
-      $('#header').animate({right: '0'}, 1000);
-      $('#content').animate({right: '0'}, 1000);
-      $('#footer').animate({right: '0'}, 1000);
-    }
-  });
+  $('#header').append('<a href="javascript:void(0)" id="chat-toggle-left"></a>');
+  $('#header').append('<a href="javascript:void(0)" id="chat-toggle-right"></a>');
+  $('#chat-toggle-left').hide();
+  $('#chat-toggle-right').click(DemaciaTV.toggleChat);
+  $('#chat-toggle-left').click(DemaciaTV.toggleChat);
   
   // Change stream on enter in the text box
   $('#picker').keydown(function (e){

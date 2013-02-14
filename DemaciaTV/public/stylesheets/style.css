@@ -1,6 +1,8 @@
 body{padding:0;margin:2px;font:14px "Lucida Grande",Helvetica,Arial,sans-serif;background:#ccc}
-a{color:#00b7ff}
+a{font-weight:bold;color:#5b3989}
 #chat-container{position:fixed;top:0;right:0;bottom:0;width:300px;text-align:justify;overflow:hidden}
+#chat-toggle-left{width:0;height:0;border-top:15px solid transparent;border-bottom:15px solid transparent;border-right:20px solid #ff7200;position:absolute;right:5px;top:5px}
+#chat-toggle-right{width:0;height:0;border-top:15px solid transparent;border-bottom:15px solid transparent;border-left:20px solid #ff7200;position:absolute;right:5px;top:5px}
 #stream-container_1,#stream-container_2,#stream-container_3,#stream-container_4{padding-bottom:6px}
 .stream-error{color:#f00}
 .twitch-chat{width:300px;height:100%}
