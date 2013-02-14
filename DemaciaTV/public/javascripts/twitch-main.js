@@ -54,6 +54,8 @@ $(document).ready(function() {
   // Add the default stream and chat
   DemaciaTV.addStream('riotgames', '1', 'Riot Games');
   DemaciaTV.addChat('riotgames', '1');
+  DemaciaTV.addStream('dreamhacktv', '2', 'DreamHack');
+  //DemaciaTV.addChat('dreamhacktv', '2');
 
   // Make the connect button work
   $('.twitch-connect').click(function() {
@@ -67,7 +69,7 @@ $(document).ready(function() {
   var container = $('#stream-container_1').data('mute', 'false')
     , player = $('#stream_1')[0];
   window.setTimeout(function() { player.unmute(); }, 3000);
-  $('p.stream-controls').append('<a href="#" id="soundtoggle">Toggle audio</a>');
+  $('p.stream-controls').append('<a href="javascript:void(0)" id="soundtoggle">Toggle audio</a>');
   $('#soundtoggle').click(function() {
     if(container.data('mute') === 'true') {
       player.unmute();
@@ -79,13 +81,13 @@ $(document).ready(function() {
   });
   
   // Hider
-  $('p.stream-controls').append('<br /><a href="#" id="streamtoggle"> Toggle stream</a>');
+  $('p.stream-controls').append('<br /><a href="javascript:void(0)" id="streamtoggle"> Toggle stream</a>');
   $('#streamtoggle').click(function() {
     $('#stream-container_1').toggle();
   });
 
   // Slide to close the chat and expand other sections
-  $('p.chat-controls').append('<br /><a href="#" id="chattoggle"> Toggle chat</a>');
+  $('p.chat-controls').append('<br /><a href="javascript:void(0)" id="chattoggle"> Toggle chat</a>');
   $('#chattoggle').click(function() {
     $('#chat-container').animate({ width: 'toggle'}, 1000);
     if($('#header').css('right') === '0px') {
