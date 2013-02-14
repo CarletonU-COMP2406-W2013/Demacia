@@ -1,5 +1,9 @@
 @import 'nib'
 
+header-size = 75px
+chat-size = 300px
+footer-size = 75px
+
 body
 	padding 0px
 	margin 2px
@@ -28,10 +32,10 @@ a
 #header
 	position fixed
 	top 0
-	right 300px
+	right chat-size
 	left 0
 	overflow hidden
-	height 75px
+	height header-size
 	background #aaaaaa
 
 #header *
@@ -39,18 +43,18 @@ a
 
 #content
 	position fixed
-	top 75px
-	right 300px
+	top header-size
+	right chat-size
 	left 0px
-	bottom 75px
+	bottom footer-size
 	padding 10px
 
 #footer
 	position fixed
 	bottom 0
-	right 300px
+	right chat-size
 	left 0
 	overflow hidden
-	height 75px
+	height footer-size
 	background #aaaaaa
 

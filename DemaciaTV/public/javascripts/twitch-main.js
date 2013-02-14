@@ -82,9 +82,24 @@ $(document).ready(function() {
   $('p.stream-controls').append('<br /><a href="#" id="streamtoggle"> Toggle stream</a>');
   $('#streamtoggle').click(function() {
     $('#stream-container_1').toggle();
-    $('#chat-container').toggle();
+  });
+
+  // Slide to close the chat and expand other sections
+  $('p.chat-controls').append('<br /><a href="#" id="chattoggle"> Toggle chat</a>');
+  $('#chattoggle').click(function() {
+    $('#chat-container').animate({ width: 'toggle'}, 1000);
+    if($('#header').css('right') === '0px') {
+      $('#header').animate({right: '300px'}, 1000);
+      $('#content').animate({right: '300px'}, 1000);
+      $('#footer').animate({right: '300px'}, 1000);
+    } else {
+      $('#header').animate({right: '0'}, 1000);
+      $('#content').animate({right: '0'}, 1000);
+      $('#footer').animate({right: '0'}, 1000);
+    }
   });
   
+  // Change stream on enter in the text box
   $('#picker').keydown(function (e){
     if(e.keyCode === 13) {
       DemaciaTV.changeStream($(this).val(), '1');
