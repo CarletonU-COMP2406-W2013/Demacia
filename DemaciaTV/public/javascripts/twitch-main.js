@@ -84,7 +84,7 @@ var DemaciaTV = (function () {
         width: 600,
         height: 400,
         autoPlay: true,
-        startVolume: 100,
+        startVolume: 50,
         cindex: cindex,
         //onLive: function(element, streamer) { },
         //onOffline: function(element, streamer) { }
