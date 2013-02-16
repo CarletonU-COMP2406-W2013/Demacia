@@ -1,5 +1,40 @@
 @import 'nib'
 
+// Fixed layout sizes
+header-size = 85px
+chat-size = 300px
+footer-size = 85px
+
+// Arrow mixins
+arrow-up(w, h, c)
+	width 0
+	height 0
+	border-left w solid transparent
+	border-right: w solid transparent
+	border-bottom: h solid c
+
+arrow-down(w, h, c)
+	width 0
+	height 0
+	border-left w solid transparent
+	border-right: w solid transparent
+	border-top: h solid c
+
+arrow-right(w, h, c)
+	width 0
+	height 0
+	border-top h solid transparent
+	border-bottom: h solid transparent
+	border-left: w solid c
+
+arrow-left(w, h, c)
+	width 0
+	height 0
+	border-top h solid transparent
+	border-bottom: h solid transparent
+	border-right: w solid c
+
+
 body
 	padding 0px
 	margin 2px
@@ -7,17 +42,35 @@ body
 	background #cccccc
 
 a
-	color #00B7FF
+	font-weight bold
+	color #5B3989
 
 #chat-container
 	position fixed
 	top 0
 	right 0
 	bottom 0
-	width 300px 
-	//height 100% 
+	width 300px
 	text-align justify 
 	overflow hidden
+
+#chat-toggle-left
+	arrow-left 20px 15px #FF7200
+	position absolute
+	right 5px
+	top 5px
+
+#chat-toggle-right
+	arrow-right 20px 15px #FF7200
+	position absolute
+	right 5px
+	top 5px
+
+#stream-container_1
+#stream-container_2
+#stream-container_3
+#stream-container_4
+	padding-bottom 6px
 
 .stream-error
 	color red
@@ -25,3 +78,33 @@ a
 .twitch-chat
 	width 300px
 	height 100%
+
+#header
+	position fixed
+	top 0
+	right chat-size
+	left 0
+	overflow hidden
+	height header-size
+	background #aaaaaa
+
+#header *
+	float left
+
+#content
+	position fixed
+	top header-size
+	right chat-size
+	left 0px
+	bottom footer-size
+	padding 9px
+
+#footer
+	position fixed
+	bottom 0
+	right chat-size
+	left 0
+	overflow hidden
+	height footer-size
+	background #aaaaaa
+
