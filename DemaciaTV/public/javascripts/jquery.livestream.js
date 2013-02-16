@@ -1,7 +1,7 @@
 /*
 Livestream jQuery Plugin
 Author: Francis Lavoie
-Version: 0.1
+Version: 0.3
 
 Modeled from the original version found at: https://github.com/aldehir/jquery-livestream
 
@@ -10,6 +10,9 @@ Changes:
 - Removed queue functionality; wasn't required or helpful for my implementation.
 - Renamed callback function to onLive and onOffline respectively as they now serve
   different purposes.
+- Changed the ID for the object and added an index option for the ID.
+- Uses the Kraken API instead of the deprecated justin.tv API.
+- Added enable_javascript to the flashvars to allow ExternalInterface calls.
 */
 (function($) {
 
@@ -63,7 +66,7 @@ Changes:
 
         error: function(resp) {
           // Call onOffline callback function
-          $this.options.onOffline(this.element, streamer);
+          $this.options.onOffline($this.element, streamer);
         }
 
       });
@@ -81,17 +84,13 @@ Changes:
       // stuff that we don't want.
       object.attr('height', this.options.height);
       object.attr('width', this.options.width);
-      object.attr('data-mute', 'false');
       object.attr('data', 'http://www.twitch.tv/widgets/live_embed_player.swf?channel=' + streamer);
 
       // Add in the parameters
       object.append($('<param/>', { name: 'allowFullScreen', value: 'true' }));
       object.append($('<param/>', { name: 'allowScriptAccess', value: 'always' }));
       object.append($('<param/>', { name: 'allowNetworking', value: 'all' }));
-      object.append($('<param/>', {
-        name: 'movie',
-        value: 'http://www.twitch.tv/widgets/live_embed_player.swf'
-      }));
+      object.append($('<param/>', { name: 'movie', value: 'http://www.twitch.tv/widgets/live_embed_player.swf' }));
       object.append($('<param/>', {
         name: 'flashvars',
         value: $.param({
