@@ -18,8 +18,8 @@ $(document).ready(function() {
   // Add the default stream and chat
   DemaciaTV.addStream('1', 'riotgames');
   DemaciaTV.addChat('1', 'riotgames');
-  DemaciaTV.addStream('2', 'dreamhacktv');
-  DemaciaTV.addChat('2', 'dreamhacktv');
+  //DemaciaTV.addStream('2', 'dreamhacktv');
+  //DemaciaTV.addChat('2', 'dreamhacktv');
 
   // Make the connect button work
   $('.twitch-connect').click(function() {
@@ -29,6 +29,12 @@ $(document).ready(function() {
     });
   });
   
+  var chaturl = $('#chat_1').attr('src');
+  $(window).resize(function() {
+    $('#stream_1').attr('width', $('#content').width());
+    $('#stream_1').attr('height', $('#content').width()/1.7777777777 + 30);
+  }).resize();
+
   // Sound hotkeys
   $(document).bind('keydown', '1', function() { DemaciaTV.focusStream('1'); });
   $(document).bind('keydown', '2', function() { DemaciaTV.focusStream('2'); });
@@ -127,7 +133,7 @@ var DemaciaTV = (function () {
     addChat: function (cindex, channel) {
       $('#chat-container').append('<iframe width="300px" height="100%" id="chat_'
         +cindex+'" scrolling="no" frameborder="0" '+
-        'src="http://www.twitch.tv/chat/embed?channel='+channel+'"></iframe>');
+        'src="http://www.twitch.tv/chat/embed?channel='+channel+'&popout_chat=true"></iframe>');
     },
     
     // Hides the chat box with animation
