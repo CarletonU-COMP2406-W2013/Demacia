@@ -29,10 +29,11 @@ $(document).ready(function() {
     });
   });
   
-  var chaturl = $('#chat_1').attr('src');
+  // Dynamic stream size
   $(window).resize(function() {
-    $('#stream_1').attr('width', $('#content').width());
-    $('#stream_1').attr('height', $('#content').width()/1.7777777777 + 30);
+    var content = $('#content');
+    $('#stream_1').width(content.width());
+    $('#stream_1').height(Math.min(content.width()/1.7777777777 + 30, content.height()));
   }).resize();
 
   // Sound hotkeys
@@ -112,6 +113,7 @@ var DemaciaTV = (function () {
         $('#chat_'+ cindex).remove();
         $this.addStream(cindex, channel);
         $this.addChat(cindex, channel);
+        $(window).resize();
       });
     },
     
@@ -149,6 +151,7 @@ var DemaciaTV = (function () {
       window.setTimeout(function() {
         $('#chat-toggle-right').toggle();
         $('#chat-toggle-left').toggle();
+        $(window).resize();
       }, speed);
     }
   };
