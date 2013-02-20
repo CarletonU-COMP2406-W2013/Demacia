@@ -49,6 +49,12 @@ $(document).ready(function() {
     $('#stream-container_2').toggle();
   });
 
+  $('p.stream-controls').append('<br /><a href="javascript:void(0)" id="gettop"> Top games</a>');
+  $('#gettop').click(function() {
+    $('#footer').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
+    DemaciaTV.getTopGames(10);
+  });
+
   // Hide chat
   $('#chat-toggle-left').hide();
   $('#chat-toggle-right').click(DemaciaTV.toggleChat);
@@ -63,8 +69,40 @@ $(document).ready(function() {
 });
 
 var DemaciaTV = (function () {
+  // Private data goes here:
+
+
+
+  // Public data goes here:
   return {
-    
+    getTopGames: function (amount) {
+      Twitch.api({method: 'games/top', limit: amount}, function (error, games) {
+        $('#footer').html('');
+        $.each(games.top, function(index, value) {
+          //console.log(value);
+          $('#footer').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_game_'+(index+1)+'">'+value.game.name+'</a></p>');
+          $('#nav_game_'+(index+1)).click(function () {
+            $('#footer').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
+            DemaciaTV.getTopStreamsOfGame(value.game.name, 10);
+          });
+        })
+      });
+    },
+
+    getTopStreamsOfGame: function (game, amount) {
+      Twitch.api({method: 'streams', params: {game: game, limit: amount}}, function (error, streams) {
+        $('#footer').html('');
+        $.each(streams.streams, function(index, value) {
+          //console.log(value);
+          $('#footer').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_stream_'+(index+1)+'">'+value.channel.name+'</p>');
+          $('#nav_stream_'+(index+1)).click(function () {
+            //$('#footer').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
+            DemaciaTV.changeChannel('1', value.channel.name);
+          });
+        })
+      });
+    },
+
     // Toggles the sound of a stream
     toggleSound: function (cindex) {
       ($('#stream-container_'+cindex).data('mute') === 'true') ? this.unmute(cindex) : this.unmute(cindex);
