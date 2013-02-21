@@ -15,6 +15,8 @@ $(document).ready(function() {
     }
   });
   
+  DemaciaTV.init();
+
   // Add the default stream and chat
   DemaciaTV.addStream('1', 'riotgames');
   DemaciaTV.addChat('1', 'riotgames');
@@ -34,17 +36,19 @@ $(document).ready(function() {
   });
   
   // Dynamic stream size
-  $(window).resize(function() {
-    var content = $('#content');
-    $('#stream_1').width(content.width());
-    $('#stream_1').height(Math.min(content.width()/1.7777777777 + 30, content.height()));
-  }).resize();
+  // $(window).resize(function() {
+  //   var content = $('#content');
+  //   $('#stream_1').width(content.width());
+  //   $('#stream_1').height(content.height());
+  //   //$('#stream_1').height(Math.min(content.width()/1.7777777777 + 30, content.height()));
+  // }).resize();
 
   // Sound hotkeys
-  $(document).bind('keydown', '1', function() { DemaciaTV.focusStream('1'); });
-  $(document).bind('keydown', '2', function() { DemaciaTV.focusStream('2'); });
-  $(document).bind('keydown', '3', function() { DemaciaTV.focusStream('3'); });
-  $(document).bind('keydown', '4', function() { DemaciaTV.focusStream('4'); });
+  $(document).bind('keydown', '1', function() { DemaciaTV.setFocus('1'); });
+  $(document).bind('keydown', '2', function() { DemaciaTV.setFocus('2'); });
+  $(document).bind('keydown', '3', function() { DemaciaTV.setFocus('3'); });
+  $(document).bind('keydown', '4', function() { DemaciaTV.setFocus('4'); });
+  $(document).bind('keydown', 'f', function() { DemaciaTV.toggleFullscreen(); });
 
   // Hide streams
   $('p.stream-controls').append('<a href="javascript:void(0)" id="streamtoggle"> Toggle stream</a>');
@@ -69,11 +73,23 @@ $(document).ready(function() {
 var DemaciaTV = (function () {
   // Private data goes here:
   var gamesList = {}
-    , streamsList = {};
-
+    , streamsList = {}
+    , headerSize = ''
+    , footerSize = ''
+    , chatSize = ''
+    , contentPadding = ''
+    , focused = '1';
 
   // Public data goes here:
   return {
+    // Private data init
+    init: function () {
+      headerSize = $('#header').css('height');
+      footerSize = $('#footer').css('height');
+      chatSize = $('#chat-container').css('width');
+      contentPadding = $('#content').css('padding');
+    },
+
     // Gets and displays a list of the top games being streamed
     getTopGames: function (amount) {
       $this = this;
@@ -126,9 +142,10 @@ var DemaciaTV = (function () {
     // - Mutes all other streams 
     // - Unmutes the focused stream
     // - Brings to front the focused chat
-    focusStream: function (cindex) {
-      var indexes = ['1', '2', '3', '4'];
-      for(var i = 0; i < indexes.length; i++) {
+    setFocus: function (cindex) {
+      focused = cindex;
+      var indices = ['1', '2', '3', '4'];
+      for(var i = 0; i < indices.length; i++) {
         if(cindex === i) continue;
         this.mute(i);
         $('#chat_'+i).hide();
@@ -137,6 +154,10 @@ var DemaciaTV = (function () {
       $('#chat_'+cindex).show();
     },
     
+    getFocus: function () {
+      return focused;
+    },
+
     // Mutes a specific stream
     mute: function (cindex) {
       $('#stream-container_'+cindex).data('mute', 'true');
@@ -172,8 +193,8 @@ var DemaciaTV = (function () {
     // Adds a new stream in the index slot
     addStream: function (cindex, channel) {
       $('#stream-container_'+cindex).livestream(channel, {
-        width: 600,
-        height: 400,
+        width: '100%',
+        height: '100%',
         autoPlay: true,
         startVolume: 50,
         cindex: cindex,
@@ -190,20 +211,41 @@ var DemaciaTV = (function () {
         'src="http://www.twitch.tv/chat/embed?channel='+channel+'&popout_chat=true"></iframe>');
     },
     
+
+
     // Hides the chat box with animation
     toggleChat: function () {
       var speed = 1000;
       if($('#header').css('right') === '0px') {
-        $('#chat-container').animate({ width: '300px'}, speed);
-        $('#header,#content,#footer').animate({right: '300px'}, speed);
+        $('#chat-container').stop().animate({ width: chatSize}, speed);
+        $('#header,#content,#footer').stop().animate({right: chatSize}, speed);
       } else {
-        $('#chat-container').animate({ width: '0'}, speed);
-        $('#header,#content,#footer').animate({right: '0'}, speed);
+        $('#chat-container').stop().animate({ width: '0'}, speed);
+        $('#header,#content,#footer').stop().animate({right: '0'}, speed);
       }
       window.setTimeout(function() {
         $('#chat-toggle-right').toggle();
         $('#chat-toggle-left').toggle();
         $(window).resize();
+      }, speed);
+    },
+
+    toggleFullscreen: function () {
+      var speed = 1000;
+      if($('#header').css('height') === '0px') {
+        $('#header').animate({height: headerSize, right: chatSize}, speed);
+        $('#content').animate({top: headerSize, bottom: footerSize, right: chatSize, padding: contentPadding}, speed);
+        $('#footer').animate({height: footerSize, right: chatSize}, speed);
+        $('#chat-container').animate({ width: chatSize}, speed);
+      } else {
+        $('#header').animate({height: '0', right: '0'}, speed);
+        $('#content').animate({top: '0', bottom: '0', right: '0', padding: '0'}, speed);
+        $('#footer').animate({height: '0', right: '0'}, speed);
+        $('#chat-container').animate({ width: '0'}, speed);
+      }
+      window.setTimeout(function() {
+        $('#chat-toggle-right').toggle();
+        $('#chat-toggle-left').toggle();
       }, speed);
     }
   };
