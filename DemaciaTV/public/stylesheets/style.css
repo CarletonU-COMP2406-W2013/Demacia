@@ -11,5 +11,5 @@ p{margin:0}
 .twitch-chat{width:300px;height:100%}
 #header{position:fixed;top:0;right:300px;left:0;overflow:hidden;height:75px;background:#aaa}
 #header > p,#header > div{float:left}
-#content{position:fixed;top:75px;right:300px;left:0;bottom:165px;padding:9px}
+#content{position:fixed;top:75px;right:300px;left:0;bottom:165px}
 #footer{position:fixed;bottom:0;right:300px;left:0;overflow:hidden;height:165px;background:#aaa}

@@ -70,6 +70,7 @@ $(document).ready(function() {
   });
 });
 
+
 var DemaciaTV = (function () {
   // Private data goes here:
   var gamesList = {}
@@ -135,7 +136,7 @@ var DemaciaTV = (function () {
 
     // Toggles the sound of a stream
     toggleSound: function (cindex) {
-      ($('#stream-container_'+cindex).data('mute') === 'true') ? this.unmute(cindex) : this.unmute(cindex);
+      ($('#stream-container_'+cindex).data('mute') === 'true') ? this.unmute(cindex) : this.mute(cindex);
     },
     
     // Gives focus to a specific stream
@@ -215,7 +216,7 @@ var DemaciaTV = (function () {
 
     // Hides the chat box with animation
     toggleChat: function () {
-      var speed = 1000;
+      var speed = 250;
       if($('#header').css('right') === '0px') {
         $('#chat-container').stop().animate({ width: chatSize}, speed);
         $('#header,#content,#footer').stop().animate({right: chatSize}, speed);
@@ -231,7 +232,7 @@ var DemaciaTV = (function () {
     },
 
     toggleFullscreen: function () {
-      var speed = 1000;
+      var speed = 250;
       if($('#header').css('height') === '0px') {
         $('#header').animate({height: headerSize, right: chatSize}, speed);
         $('#content').animate({top: headerSize, bottom: footerSize, right: chatSize, padding: contentPadding}, speed);
