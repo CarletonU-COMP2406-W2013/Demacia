@@ -3,28 +3,43 @@ extends layout
 
 block scripts
   include twitch-headers
+
 block content
   //h1= title
   //p Welcome to #{title}
   #sidebar
     #sidebar-data
+
   #header
-    a#sidebar-toggle-left(href="javascript:void(0)")
-    a#sidebar-toggle-right(href="javascript:void(0)")
+
     include twitch-login-button
     p.stream-controls
       input#picker(type="text")
       br
     p.chat-controls
+
+    a#sidebar-toggle-left(href="javascript:void(0)")
+    a#sidebar-toggle-right(href="javascript:void(0)")
     a#chat-toggle-left(href="javascript:void(0)")
     a#chat-toggle-right(href="javascript:void(0)")
 
   #content
     //h1.stream-title
     #stream-container_1
+      .empty 
+        .empty2 1
     #stream-container_2
+      .empty 
+        .empty2 2
     #stream-container_3
+      .empty 
+        .empty2 3
     #stream-container_4
+      .empty 
+        .empty2 4
+
     #chat-container
+    
     #stream-list
+  
   #footer

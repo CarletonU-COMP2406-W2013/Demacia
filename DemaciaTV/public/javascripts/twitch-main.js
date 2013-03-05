@@ -136,7 +136,7 @@ var DemaciaTV = (function () {
         $('#sidebar-data').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_stream_'+(index+1)+'">'+value.channel.name+'</p>');
         $('#nav_stream_'+(index+1)).click(function () {
           $this.displayGames($this.gamesList);
-          $this.changeChannel('1', value.channel.name);
+          $this.changeChannel(focused, value.channel.name);
         });
       });
     },
@@ -153,7 +153,7 @@ var DemaciaTV = (function () {
     setFocus: function (cindex) {
       focused = cindex;
       var indices = ['1', '2', '3', '4'];
-      for(var i = 0; i < indices.length; i++) {
+      for(var i = 0; i <= indices.length; i++) {
         if(cindex === i) continue;
         this.mute(i);
         $('#chat_'+i).hide();
