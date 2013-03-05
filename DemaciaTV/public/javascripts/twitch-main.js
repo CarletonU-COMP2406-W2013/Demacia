@@ -24,8 +24,8 @@ $(document).ready(function() {
   //DemaciaTV.addChat('2', 'dreamhacktv');
   
   // Display the navigation
-  $('#sidebar-container').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
-  DemaciaTV.getTopGames(10);
+  $('#sidebar-data').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
+  DemaciaTV.getTopGames(25);
 
   // Make the connect button work
   $('.twitch-connect').click(function() {
@@ -49,6 +49,8 @@ $(document).ready(function() {
   $(document).bind('keydown', '3', function() { DemaciaTV.setFocus('3'); });
   $(document).bind('keydown', '4', function() { DemaciaTV.setFocus('4'); });
   $(document).bind('keydown', 'f', function() { DemaciaTV.toggleFullscreen(); });
+  $(document).bind('keydown', 'left', function() { DemaciaTV.toggleSidebar(); });
+  $(document).bind('keydown', 'right', function() { DemaciaTV.toggleChat(); });
 
   // Hide streams
   $('p.stream-controls').append('<a href="javascript:void(0)" id="streamtoggle"> Toggle stream</a>');
@@ -57,7 +59,7 @@ $(document).ready(function() {
     $('#stream-container_2').toggle();
   });
 
-  // Hide chat
+  // Hide chat and sidebar
   $('#chat-toggle-left').hide();
   $('#chat-toggle-right').click(DemaciaTV.toggleChat);
   $('#chat-toggle-left').click(DemaciaTV.toggleChat);
@@ -72,6 +74,7 @@ $(document).ready(function() {
     }
   });
 });
+
 
 var DemaciaTV = (function () {
   // Private data goes here:
@@ -91,14 +94,14 @@ var DemaciaTV = (function () {
       headerSize = $('#header').css('height');
       footerSize = $('#footer').css('height');
       chatSize = $('#chat-container').css('width');
-      sidebarSize = $('#sidebar-container').css('width');
+      sidebarSize = $('#sidebar').css('width');
       contentPadding = $('#content').css('padding');
     },
 
     // Gets and displays a list of the top games being streamed
     getTopGames: function (amount) {
       $this = this;
-      Twitch.api({method: 'games/top', limit: amount}, function (error, games) {
+      Twitch.api({method: 'games/top', params: {limit: amount}}, function (error, games) {
         $this.displayGames(games);
         $this.gamesList = games;
       });
@@ -114,33 +117,33 @@ var DemaciaTV = (function () {
 
     // Takes a Twitch API 'games' object and displays the list on the page 
     displayGames: function (games) {
-      $('#sidebar-container').html('');
+      $('#sidebar-data').html('');
       $this = this;
       $.each(games.top, function(index, value) {
-        $('#sidebar-container').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_game_'+(index+1)+'">'+value.game.name+'</a></p>');
+        $('#sidebar-data').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_game_'+(index+1)+'">'+value.game.name+'</a></p>');
         $('#nav_game_'+(index+1)).click(function () {
-          $('#sidebar-container').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
-          $this.getTopStreamsOfGame(value.game.name, 10);
+          $('#sidebar-data').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
+          $this.getTopStreamsOfGame(value.game.name, 25);
         });
       });
     },
 
     // Takes a Twitch API 'streams' object and displays the list on the page 
     displayStreams: function (streams) {
-      $('#sidebar-container').html('');
+      $('#sidebar-data').html('');
       $this = this;
       $.each(streams.streams, function(index, value) {
-        $('#sidebar-container').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_stream_'+(index+1)+'">'+value.channel.name+'</p>');
+        $('#sidebar-data').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_stream_'+(index+1)+'">'+value.channel.name+'</p>');
         $('#nav_stream_'+(index+1)).click(function () {
           $this.displayGames($this.gamesList);
-          $this.changeChannel('1', value.channel.name);
+          $this.changeChannel(focused, value.channel.name);
         });
       });
     },
 
     // Toggles the sound of a stream
     toggleSound: function (cindex) {
-      ($('#stream-container_'+cindex).data('mute') === 'true') ? this.unmute(cindex) : this.unmute(cindex);
+      ($('#stream-container_'+cindex).data('mute') === 'true') ? this.unmute(cindex) : this.mute(cindex);
     },
     
     // Gives focus to a specific stream
@@ -150,7 +153,7 @@ var DemaciaTV = (function () {
     setFocus: function (cindex) {
       focused = cindex;
       var indices = ['1', '2', '3', '4'];
-      for(var i = 0; i < indices.length; i++) {
+      for(var i = 0; i <= indices.length; i++) {
         if(cindex === i) continue;
         this.mute(i);
         $('#chat_'+i).hide();
@@ -220,13 +223,13 @@ var DemaciaTV = (function () {
 
     // Hides the chat box with animation
     toggleChat: function () {
-      var speed = 1000;
+      var speed = 250;
       if($('#header').css('right') === '0px') {
-        $('#chat-container').stop().animate({ width: chatSize}, speed);
-        $('#header,#content,#footer').stop().animate({right: chatSize}, speed);
+        $('#chat-container').animate({ width: chatSize}, speed);
+        $('#header,#content,#footer').animate({right: chatSize}, speed);
       } else {
-        $('#chat-container').stop().animate({ width: '0'}, speed);
-        $('#header,#content,#footer').stop().animate({right: '0'}, speed);
+        $('#chat-container').animate({ width: '0'}, speed);
+        $('#header,#content,#footer').animate({right: '0'}, speed);
       }
       window.setTimeout(function() {
         $('#chat-toggle-right').toggle();
@@ -236,16 +239,20 @@ var DemaciaTV = (function () {
     },
 
     toggleFullscreen: function () {
-      var speed = 1000;
+      var speed = 250;
       if($('#header').css('height') === '0px') {
-        $('#header').animate({height: headerSize, right: chatSize}, speed);
-        $('#content').animate({top: headerSize, bottom: footerSize, right: chatSize, padding: contentPadding}, speed);
-        $('#footer').animate({height: footerSize, right: chatSize}, speed);
+        //Reset
+        $('#sidebar').animate({right: sidebarSize, left: '0'}, speed);
+        $('#header').animate({height: headerSize, right: chatSize, left: sidebarSize}, speed);
+        $('#content').animate({top: headerSize, bottom: footerSize, right: chatSize, left: sidebarSize, padding: contentPadding}, speed);
+        $('#footer').animate({height: footerSize, right: chatSize, left: sidebarSize}, speed);
         $('#chat-container').animate({ width: chatSize}, speed);
       } else {
-        $('#header').animate({height: '0', right: '0'}, speed);
-        $('#content').animate({top: '0', bottom: '0', right: '0', padding: '0'}, speed);
-        $('#footer').animate({height: '0', right: '0'}, speed);
+        //To Fullscreen
+        $('#sidebar').animate({right: '0', left: '-'+sidebarSize}, speed);
+        $('#header').animate({height: '0', right: '0', left: '0'}, speed);
+        $('#content').animate({top: '0', bottom: '0', right: '0', left: '0', padding: '0'}, speed);
+        $('#footer').animate({height: '0', right: '0', left: '0'}, speed);
         $('#chat-container').animate({ width: '0'}, speed);
       }
 
@@ -256,13 +263,13 @@ var DemaciaTV = (function () {
     },
 
     toggleSidebar: function () {
-      var speed = 1000;
-      if($('#sidebar-container').css('right') === '0px') {
-        $('#sidebar-container').stop().animate({ right: sidebarSize, left: '0'}, speed);
-        $('#header,#content,#footer').stop().animate({left: sidebarSize}, speed);
+      var speed = 250;
+      if($('#sidebar').css('right') === '0px') {
+        $('#sidebar').animate({ right: sidebarSize, left: '0'}, speed);
+        $('#header,#content,#footer').animate({left: sidebarSize}, speed);
       } else {
-        $('#sidebar-container').stop().animate({ right: '0', left: '-'+sidebarSize}, speed);
-        $('#header,#content,#footer').stop().animate({left: '0'}, speed);
+        $('#sidebar').animate({ right: '0', left: '-'+sidebarSize}, speed);
+        $('#header,#content,#footer').animate({left: '0'}, speed);
       }
       window.setTimeout(function() {
         $('#sidebar-toggle-right').toggle();
