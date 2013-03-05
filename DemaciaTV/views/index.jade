@@ -6,7 +6,10 @@ block scripts
 block content
   //h1= title
   //p Welcome to #{title}
+  #sidebar-container
   #header
+    a#sidebar-toggle-left(href="javascript:void(0)")
+    a#sidebar-toggle-right(href="javascript:void(0)")
     include twitch-login-button
     p.stream-controls
       input#picker(type="text")
@@ -14,6 +17,7 @@ block content
     p.chat-controls
     a#chat-toggle-left(href="javascript:void(0)")
     a#chat-toggle-right(href="javascript:void(0)")
+
   #content
     //h1.stream-title
     #stream-container_1
