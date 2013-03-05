@@ -49,6 +49,8 @@ $(document).ready(function() {
   $(document).bind('keydown', '3', function() { DemaciaTV.setFocus('3'); });
   $(document).bind('keydown', '4', function() { DemaciaTV.setFocus('4'); });
   $(document).bind('keydown', 'f', function() { DemaciaTV.toggleFullscreen(); });
+  $(document).bind('keydown', 'left', function() { DemaciaTV.toggleSidebar(); });
+  $(document).bind('keydown', 'right', function() { DemaciaTV.toggleChat(); });
 
   // Hide streams
   $('p.stream-controls').append('<a href="javascript:void(0)" id="streamtoggle"> Toggle stream</a>');
@@ -57,7 +59,7 @@ $(document).ready(function() {
     $('#stream-container_2').toggle();
   });
 
-  // Hide chat
+  // Hide chat and sidebar
   $('#chat-toggle-left').hide();
   $('#chat-toggle-right').click(DemaciaTV.toggleChat);
   $('#chat-toggle-left').click(DemaciaTV.toggleChat);
@@ -223,11 +225,11 @@ var DemaciaTV = (function () {
     toggleChat: function () {
       var speed = 250;
       if($('#header').css('right') === '0px') {
-        $('#chat-container').stop().animate({ width: chatSize}, speed);
-        $('#header,#content,#footer').stop().animate({right: chatSize}, speed);
+        $('#chat-container').animate({ width: chatSize}, speed);
+        $('#header,#content,#footer').animate({right: chatSize}, speed);
       } else {
-        $('#chat-container').stop().animate({ width: '0'}, speed);
-        $('#header,#content,#footer').stop().animate({right: '0'}, speed);
+        $('#chat-container').animate({ width: '0'}, speed);
+        $('#header,#content,#footer').animate({right: '0'}, speed);
       }
       window.setTimeout(function() {
         $('#chat-toggle-right').toggle();
@@ -263,11 +265,11 @@ var DemaciaTV = (function () {
     toggleSidebar: function () {
       var speed = 250;
       if($('#sidebar').css('right') === '0px') {
-        $('#sidebar').stop().animate({ right: sidebarSize, left: '0'}, speed);
-        $('#header,#content,#footer').stop().animate({left: sidebarSize}, speed);
+        $('#sidebar').animate({ right: sidebarSize, left: '0'}, speed);
+        $('#header,#content,#footer').animate({left: sidebarSize}, speed);
       } else {
-        $('#sidebar').stop().animate({ right: '0', left: '-'+sidebarSize}, speed);
-        $('#header,#content,#footer').stop().animate({left: '0'}, speed);
+        $('#sidebar').animate({ right: '0', left: '-'+sidebarSize}, speed);
+        $('#header,#content,#footer').animate({left: '0'}, speed);
       }
       window.setTimeout(function() {
         $('#sidebar-toggle-right').toggle();
