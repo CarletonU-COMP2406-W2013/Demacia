@@ -24,7 +24,7 @@ $(document).ready(function() {
   //DemaciaTV.addChat('2', 'dreamhacktv');
   
   // Display the navigation
-  $('#footer').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
+  $('#sidebar-container').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
   DemaciaTV.getTopGames(10);
 
   // Make the connect button work
@@ -61,6 +61,9 @@ $(document).ready(function() {
   $('#chat-toggle-left').hide();
   $('#chat-toggle-right').click(DemaciaTV.toggleChat);
   $('#chat-toggle-left').click(DemaciaTV.toggleChat);
+  $('#sidebar-toggle-right').hide();
+  $('#sidebar-toggle-left').click(DemaciaTV.toggleSidebar);
+  $('#sidebar-toggle-right').click(DemaciaTV.toggleSidebar);
   
   // Change stream on enter key in the text box
   $('#picker').keydown(function (e){
@@ -78,7 +81,8 @@ var DemaciaTV = (function () {
     , footerSize = ''
     , chatSize = ''
     , contentPadding = ''
-    , focused = '1';
+    , focused = '1'
+    , sidebarSize = '';
 
   // Public data goes here:
   return {
@@ -87,6 +91,7 @@ var DemaciaTV = (function () {
       headerSize = $('#header').css('height');
       footerSize = $('#footer').css('height');
       chatSize = $('#chat-container').css('width');
+      sidebarSize = $('#sidebar-container').css('width');
       contentPadding = $('#content').css('padding');
     },
 
@@ -109,12 +114,12 @@ var DemaciaTV = (function () {
 
     // Takes a Twitch API 'games' object and displays the list on the page 
     displayGames: function (games) {
-      $('#footer').html('');
+      $('#sidebar-container').html('');
       $this = this;
       $.each(games.top, function(index, value) {
-        $('#footer').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_game_'+(index+1)+'">'+value.game.name+'</a></p>');
+        $('#sidebar-container').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_game_'+(index+1)+'">'+value.game.name+'</a></p>');
         $('#nav_game_'+(index+1)).click(function () {
-          $('#footer').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
+          $('#sidebar-container').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
           $this.getTopStreamsOfGame(value.game.name, 10);
         });
       });
@@ -122,10 +127,10 @@ var DemaciaTV = (function () {
 
     // Takes a Twitch API 'streams' object and displays the list on the page 
     displayStreams: function (streams) {
-      $('#footer').html('');
+      $('#sidebar-container').html('');
       $this = this;
       $.each(streams.streams, function(index, value) {
-        $('#footer').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_stream_'+(index+1)+'">'+value.channel.name+'</p>');
+        $('#sidebar-container').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_stream_'+(index+1)+'">'+value.channel.name+'</p>');
         $('#nav_stream_'+(index+1)).click(function () {
           $this.displayGames($this.gamesList);
           $this.changeChannel('1', value.channel.name);
@@ -243,9 +248,26 @@ var DemaciaTV = (function () {
         $('#footer').animate({height: '0', right: '0'}, speed);
         $('#chat-container').animate({ width: '0'}, speed);
       }
+
       window.setTimeout(function() {
         $('#chat-toggle-right').toggle();
         $('#chat-toggle-left').toggle();
+      }, speed);
+    },
+
+    toggleSidebar: function () {
+      var speed = 1000;
+      if($('#sidebar-container').css('right') === '0px') {
+        $('#sidebar-container').stop().animate({ right: sidebarSize, left: '0'}, speed);
+        $('#header,#content,#footer').stop().animate({left: sidebarSize}, speed);
+      } else {
+        $('#sidebar-container').stop().animate({ right: '0', left: '-'+sidebarSize}, speed);
+        $('#header,#content,#footer').stop().animate({left: '0'}, speed);
+      }
+      window.setTimeout(function() {
+        $('#sidebar-toggle-right').toggle();
+        $('#sidebar-toggle-left').toggle();
+        $(window).resize();
       }, speed);
     }
   };

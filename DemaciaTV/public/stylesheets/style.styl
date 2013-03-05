@@ -4,6 +4,7 @@
 header-size = 75px
 chat-size = 300px
 footer-size = 165px
+sidebar-size =  300px
 
 // Arrow mixins
 arrow-up(w, h, c)
@@ -51,6 +52,27 @@ p
 .ajax-loader
 	padding 10px
 
+#sidebar-container
+	position fixed
+	top 0
+	bottom 0
+	left 0
+	width 300px
+	text-align justify 
+	overflow hidden
+
+#sidebar-toggle-left
+	arrow-left 20px 15px #FF7200
+	position absolute
+	left 5px
+	top 5px
+
+#sidebar-toggle-right
+	arrow-right 20px 15px #FF7200
+	position absolute
+	left 5px
+	top 5px
+
 #chat-container
 	position fixed
 	top 0
@@ -95,10 +117,11 @@ p
 	position fixed
 	top 0
 	right chat-size
-	left 0
+	left sidebar-size
 	overflow hidden
 	height header-size
 	background #aaaaaa
+	padding-left 30px
 
 #header > p
 #header > div
@@ -108,15 +131,16 @@ p
 	position fixed
 	top header-size
 	right chat-size
-	left 0px
+	left sidebar-size
 	bottom footer-size
 	padding 9px
+	background #aaaaaa
 
 #footer
 	position fixed
 	bottom 0
 	right chat-size
-	left 0
+	left sidebar-size
 	overflow hidden
 	height footer-size
 	background #aaaaaa
