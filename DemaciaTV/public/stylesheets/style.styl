@@ -57,7 +57,8 @@ p
 	top 0
 	bottom 0
 	left 0
-	width 300px
+	width sidebar-size
+	height 100%
 	text-align justify 
 	overflow hidden
 
@@ -72,6 +73,18 @@ p
 	position absolute
 	left 5px
 	top 5px
+
+#sidebar-data
+	overflow-y scroll
+	height 100%
+
+.stream-listing
+	border-bottom 2px #000000 solid
+	white-space nowrap
+
+.stream-listing img
+	padding 5px
+	vertical-align middle
 
 #chat-container
 	position fixed
@@ -101,10 +114,20 @@ p
 	bottom 5px
 
 #stream-container_1
+	//
+#stream-container_2
+	left 50%
+#stream-container_3
+	top 50%
+#stream-container_4
+	left 50%
+	top 50%
+
+#stream-container_1
 #stream-container_2
 #stream-container_3
 #stream-container_4
-	//padding-bottom 6px
+	position absolute
 	height 50%
 	width 50%
 	float left
