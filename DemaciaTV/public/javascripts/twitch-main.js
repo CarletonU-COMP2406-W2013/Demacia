@@ -17,16 +17,6 @@ $(document).ready(function() {
   
   DemaciaTV.init();
 
-  // Add the default stream and chat
-  //DemaciaTV.addStream('1', 'riotgames');
-  //DemaciaTV.addChat('1', 'riotgames');
-  //DemaciaTV.addStream('2', 'dreamhacktv');
-  //DemaciaTV.addChat('2', 'dreamhacktv');
-  
-  // Display the navigation
-  $('#sidebar-data').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
-  DemaciaTV.getTopGames(25);
-
   // Make the connect button work
   $('.twitch-connect').click(function() {
     Twitch.login({
@@ -35,6 +25,16 @@ $(document).ready(function() {
     });
   });
   
+  // Display the navigation
+  $('#sidebar-data').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
+  DemaciaTV.getTopGames(25);
+
+  // Add the default stream and chat
+  // DemaciaTV.addStream('1', 'riotgames');
+  // DemaciaTV.addChat('1', 'riotgames');
+  // DemaciaTV.addStream('2', 'dreamhacktv');
+  // DemaciaTV.addChat('2', 'dreamhacktv');
+
   // Dynamic stream size
   // $(window).resize(function() {
   //   var content = $('#content');
@@ -61,7 +61,25 @@ $(document).ready(function() {
   //   $('#stream-container_2').toggle();
   // });
 
-  // Arrow buttons: Hide chat and sidebar
+
+  // Enable stream containers to accept droppable streams
+  var indices = ['1', '2', '3', '4'];
+  for(var i = 0; i < indices.length; i++) {
+    console.log(indices[i]);
+    $('#stream-container_'+indices[i]).droppable({
+      accept: '.stream-listing',
+      drop: (function (i) {
+        return function(event, ui){
+          console.log("Dropping " + ui.draggable.data('channel') + " on ID " + indices[i]);
+          DemaciaTV.changeChannel(i, ui.draggable.data('channel'));
+          DemaciaTV.setFocus(i);
+        }
+      })(indices[i])
+    });
+  }
+
+
+  // Arrow buttons: Toggle chat and sidebar
   $('#chat-toggle-left').hide();
   $('#chat-toggle-right').click(DemaciaTV.toggleChat);
   $('#chat-toggle-left').click(DemaciaTV.toggleChat);
@@ -135,9 +153,20 @@ var DemaciaTV = (function () {
       $this = this;
       $.each(streams.streams, function(index, value) {
         $('#sidebar-data').append('<div id="nav_stream_'+(index+1)+'" class="stream-listing"><img src="' + value.preview.replace("320x200", "60x36") + '" height="36" width="60" /><p>#'+(index+1)+' <a href="javascript:void(0)" title="'+value.channel.status+'">'+value.channel.display_name+'</a><br />Viewers: '+ value.viewers +'</p></div>');
+        $('#nav_stream_'+(index+1)).data('channel', value.channel.name);
         $('#nav_stream_'+(index+1)).click(function () {
           //$this.displayGames($this.gamesList);
           $this.changeChannel(focused, value.channel.name);
+        });
+        $('#nav_stream_'+(index+1)).draggable({
+          helper: 'clone',
+          revert: 'invalid',
+          containment: 'DOM',
+          zIndex: 100000,
+          appendTo: 'body',
+          start: function(e, ui) {
+            $(ui.helper).addClass("ui-draggable-helper");
+          }
         });
       });
     },
@@ -154,11 +183,11 @@ var DemaciaTV = (function () {
     setFocus: function (cindex) {
       focused = cindex;
       var indices = ['1', '2', '3', '4'];
-      for(var i = 0; i <= indices.length; i++) {
-        if(cindex === i) continue;
-        $('#stream-container_'+i).css('z-index', '');
-        this.mute(i);
-        $('#chat_'+i).hide();
+      for(var i = 0; i < indices.length; i++) {
+        if(cindex === indices[i]) continue;
+        $('#stream-container_'+indices[i]).css('z-index', '');
+        this.mute(indices[i]);
+        $('#chat_'+indices[i]).hide();
       }
       $('#stream-container_'+cindex).css('z-index', '10');
       this.unmute(cindex);
