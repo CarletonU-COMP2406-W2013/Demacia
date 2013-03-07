@@ -121,7 +121,7 @@ var DemaciaTV = (function () {
       $('#sidebar-data').html('');
       $this = this;
       $.each(games.top, function(index, value) {
-        $('#sidebar-data').append('<p id="nav_game_'+(index+1)+'" class="stream-listing"><img src="' + value.game.logo.small + '" height="36" width="60" />#'+(index+1)+' <a href="javascript:void(0)">'+value.game.name+'</a></p>');
+        $('#sidebar-data').append('<div id="nav_game_'+(index+1)+'" class="stream-listing"><img src="' + value.game.logo.small + '" height="36" width="60" /><p>#'+(index+1)+' <a href="javascript:void(0)" title="'+value.game.name+'">'+value.game.name+'</a><br />Viewers: '+ value.viewers +'</p></div>');
         $('#nav_game_'+(index+1)).click(function () {
           $('#sidebar-data').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
           $this.getTopStreamsOfGame(value.game.name, 25);
@@ -135,7 +135,7 @@ var DemaciaTV = (function () {
       $('#nav_back').click(function() { $this.displayGames($this.gamesList); });
       $this = this;
       $.each(streams.streams, function(index, value) {
-        $('#sidebar-data').append('<p id="nav_stream_'+(index+1)+'" class="stream-listing"><img src="' + value.preview.replace("320x200", "60x36") + '" height="36" width="60" />#'+(index+1)+' <a href="javascript:void(0)">'+value.channel.display_name+'</p>');
+        $('#sidebar-data').append('<div id="nav_stream_'+(index+1)+'" class="stream-listing"><img src="' + value.preview.replace("320x200", "60x36") + '" height="36" width="60" /><p>#'+(index+1)+' <a href="javascript:void(0)" title="'+value.channel.status+'">'+value.channel.display_name+'</a><br />Viewers: '+ value.viewers +'</p></div>');
         $('#nav_stream_'+(index+1)).click(function () {
           $this.displayGames($this.gamesList);
           $this.changeChannel(focused, value.channel.name);
@@ -157,9 +157,11 @@ var DemaciaTV = (function () {
       var indices = ['1', '2', '3', '4'];
       for(var i = 0; i <= indices.length; i++) {
         if(cindex === i) continue;
+        $('#stream-container_'+i).css('z-index', '');
         this.mute(i);
         $('#chat_'+i).hide();
       }
+      $('#stream-container_'+cindex).css('z-index', '10');
       this.unmute(cindex);
       $('#chat_'+cindex).show();
     },
