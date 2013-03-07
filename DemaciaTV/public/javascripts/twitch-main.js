@@ -49,6 +49,7 @@ $(document).ready(function() {
   $(document).bind('keydown', '3', function() { DemaciaTV.setFocus('3'); });
   $(document).bind('keydown', '4', function() { DemaciaTV.setFocus('4'); });
   $(document).bind('keydown', 'f', function() { DemaciaTV.toggleFullscreen(); });
+  $(document).bind('keydown', 'g', function() { DemaciaTV.toggleStreamFill(); });
   $(document).bind('keydown', 'left', function() { DemaciaTV.toggleSidebar(); });
   $(document).bind('keydown', 'right', function() { DemaciaTV.toggleChat(); });
 
@@ -66,7 +67,7 @@ $(document).ready(function() {
   $('#sidebar-toggle-right').hide();
   $('#sidebar-toggle-left').click(DemaciaTV.toggleSidebar);
   $('#sidebar-toggle-right').click(DemaciaTV.toggleSidebar);
-  
+
   // Change stream on enter key in the text box
   $('#picker').keydown(function (e){
     if(e.keyCode === 13) {
@@ -120,7 +121,7 @@ var DemaciaTV = (function () {
       $('#sidebar-data').html('');
       $this = this;
       $.each(games.top, function(index, value) {
-        $('#sidebar-data').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_game_'+(index+1)+'">'+value.game.name+'</a></p>');
+        $('#sidebar-data').append('<p id="nav_game_'+(index+1)+'" class="stream-listing"><img src="' + value.game.logo.small + '" height="36" width="60" />#'+(index+1)+' <a href="javascript:void(0)">'+value.game.name+'</a></p>');
         $('#nav_game_'+(index+1)).click(function () {
           $('#sidebar-data').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
           $this.getTopStreamsOfGame(value.game.name, 25);
@@ -130,10 +131,11 @@ var DemaciaTV = (function () {
 
     // Takes a Twitch API 'streams' object and displays the list on the page 
     displayStreams: function (streams) {
-      $('#sidebar-data').html('');
+      $('#sidebar-data').html('<p id="nav_back" class="stream-listing" align="center"><a href="javascript:void(0)">Back</a></p>');
+      $('#nav_back').click(function() { $this.displayGames($this.gamesList); });
       $this = this;
       $.each(streams.streams, function(index, value) {
-        $('#sidebar-data').append('<p>#'+(index+1)+' <a href="javascript:void(0)" id="nav_stream_'+(index+1)+'">'+value.channel.name+'</p>');
+        $('#sidebar-data').append('<p id="nav_stream_'+(index+1)+'" class="stream-listing"><img src="' + value.preview.replace("320x200", "60x36") + '" height="36" width="60" />#'+(index+1)+' <a href="javascript:void(0)">'+value.channel.display_name+'</p>');
         $('#nav_stream_'+(index+1)).click(function () {
           $this.displayGames($this.gamesList);
           $this.changeChannel(focused, value.channel.name);
@@ -194,7 +196,7 @@ var DemaciaTV = (function () {
         $('#chat_'+ cindex).remove();
         $this.addStream(cindex, channel);
         $this.addChat(cindex, channel);
-        $(window).resize();
+        //$(window).resize();
       });
     },
     
@@ -234,10 +236,30 @@ var DemaciaTV = (function () {
       window.setTimeout(function() {
         $('#chat-toggle-right').toggle();
         $('#chat-toggle-left').toggle();
-        $(window).resize();
+        //$(window).resize();
       }, speed);
     },
 
+
+    // Show or hide the left sidebar
+    toggleSidebar: function () {
+      var speed = 250;
+      if($('#sidebar').css('right') === '0px') {
+        $('#sidebar').animate({ right: sidebarSize, left: '0'}, speed);
+        $('#header,#content,#footer').animate({left: sidebarSize}, speed);
+      } else {
+        $('#sidebar').animate({ right: '0', left: '-'+sidebarSize}, speed);
+        $('#header,#content,#footer').animate({left: '0'}, speed);
+      }
+      window.setTimeout(function() {
+        $('#sidebar-toggle-right').toggle();
+        $('#sidebar-toggle-left').toggle();
+        //$(window).resize();
+      }, speed);
+    },
+
+
+    // Content area fills the entire screen
     toggleFullscreen: function () {
       var speed = 250;
       if($('#header').css('height') === '0px') {
@@ -255,27 +277,26 @@ var DemaciaTV = (function () {
         $('#footer').animate({height: '0', right: '0', left: '0'}, speed);
         $('#chat-container').animate({ width: '0'}, speed);
       }
-
-      window.setTimeout(function() {
-        $('#chat-toggle-right').toggle();
-        $('#chat-toggle-left').toggle();
-      }, speed);
     },
 
-    toggleSidebar: function () {
+    toggleStreamFill: function () {
       var speed = 250;
-      if($('#sidebar').css('right') === '0px') {
-        $('#sidebar').animate({ right: sidebarSize, left: '0'}, speed);
-        $('#header,#content,#footer').animate({left: sidebarSize}, speed);
+      var stream = $('#stream-container_'+focused);
+      if(stream.css('width') === $('#content').css('width')) {
+        //Reset
+        stream.css('z-index', '');
+        stream.css('width', '');
+        stream.css('height', '');
+        stream.css('left', '');
+        stream.css('top', '');
       } else {
-        $('#sidebar').animate({ right: '0', left: '-'+sidebarSize}, speed);
-        $('#header,#content,#footer').animate({left: '0'}, speed);
+        //To Fullscreen
+        stream.css('z-index', '10');
+        stream.css('width', '100%');
+        stream.css('height', '100%');
+        stream.css('left', '0');
+        stream.css('top', '0');
       }
-      window.setTimeout(function() {
-        $('#sidebar-toggle-right').toggle();
-        $('#sidebar-toggle-left').toggle();
-        $(window).resize();
-      }, speed);
-    }
+    },
   };
 }());
