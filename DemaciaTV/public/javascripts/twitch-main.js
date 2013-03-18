@@ -62,7 +62,7 @@ $(document).ready(function() {
   // });
 
 
-  // Enable stream containers to accept droppable streams
+  // Enable stream containers to accept stream dropping
   var indices = ['1', '2', '3', '4'];
   for(var i = 0; i < indices.length; i++) {
     console.log(indices[i]);
@@ -152,12 +152,14 @@ var DemaciaTV = (function () {
       $('#nav_back').click(function() { $this.displayGames($this.gamesList); });
       $this = this;
       $.each(streams.streams, function(index, value) {
-        $('#sidebar-data').append('<div id="nav_stream_'+(index+1)+'" class="stream-listing"><img src="' + value.preview.replace("320x200", "60x36") + '" height="36" width="60" /><p>#'+(index+1)+' <a href="javascript:void(0)" title="'+value.channel.status+'">'+value.channel.display_name+'</a><br />Viewers: '+ value.viewers +'</p></div>');
+        $('#sidebar-data').append('<div id="nav_stream_'+(index+1)+'" class="stream-listing"><img src="' + value.preview.medium.replace("320x200", "60x36") + '" height="36" width="60" /><p>#'+(index+1)+' <a href="javascript:void(0)" title="'+value.channel.status+'">'+value.channel.display_name+'</a><br />Viewers: '+ value.viewers +'</p></div>');
         $('#nav_stream_'+(index+1)).data('channel', value.channel.name);
         $('#nav_stream_'+(index+1)).click(function () {
           //$this.displayGames($this.gamesList);
           $this.changeChannel(focused, value.channel.name);
         });
+
+        // Enable dragging on the stream nav
         $('#nav_stream_'+(index+1)).draggable({
           helper: 'clone',
           revert: 'invalid',
