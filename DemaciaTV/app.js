@@ -9,12 +9,15 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , stylus = require('stylus')
-  , nib = require('nib');
+  , nib = require('nib')
+  , AccountProvider = require('./accountprovider-mongodb').AccountProvider;
 
 var app = express();
 
+var accountProvider = new AccountProvider('localhost', 27017);
+
 app.configure(function(){
-  app.set('port', process.env.PORT || 80);
+  app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.favicon(__dirname + '/public/images/favicon.ico', { maxAge: 2592000000 }));
@@ -40,8 +43,38 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+
+
 app.get('/', routes.index);
+app.get('/get', function(req, res){
+    accountProvider.findAll(function(error,result){
+        res.render('get.jade', {title: "DB Contents", accounts: result});
+    });
+});
+
+app.post('/get', function(req,res){
+  accountProvider.clearData();
+  res.redirect('/post');
+});
+
+app.get('/post', function(req, res) {
+  res.render('post.jade', {title: "DB Input"});
+});
+
+app.post('/post', function(req, res){
+  accountProvider.save({
+    name: req.param('input')
+  }, function( error, docs) {
+        res.redirect('/get')
+  });
+});
+
+
 app.get('/users', user.list);
+
+
+
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
