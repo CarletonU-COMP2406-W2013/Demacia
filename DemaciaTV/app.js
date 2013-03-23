@@ -17,7 +17,7 @@ var app = express();
 var accountProvider = new AccountProvider('localhost', 27017);
 
 app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
+  app.set('port', process.env.PORT || 80);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.favicon(__dirname + '/public/images/favicon.ico', { maxAge: 2592000000 }));
@@ -46,6 +46,14 @@ app.configure('development', function(){
 
 
 app.get('/', routes.index);
+app.post('/', function(req, res){
+  accountProvider.save({
+    name: req.body.name
+  });
+  console.log("app.post('/') success [" + req.body.name +"]");
+});
+
+
 app.get('/get', function(req, res){
     accountProvider.findAll(function(error,result){
         res.render('get.jade', {title: "DB Contents", accounts: result});
@@ -63,10 +71,9 @@ app.get('/post', function(req, res) {
 
 app.post('/post', function(req, res){
   accountProvider.save({
-    name: req.param('input')
-  }, function( error, docs) {
-        res.redirect('/get')
+    name: res.param('input')
   });
+  res.redirect('/get');
 });
 
 

@@ -11,6 +11,14 @@ $(document).ready(function() {
       //$('.twitch-connect').hide()
       Twitch.api({method: 'user'}, function(error, user) {
         $('#connected').html('&nbsp;Connected as ' + user.display_name);
+        $.post('/', {name: user.display_name});
+        // $.ajax({
+        //   type: "POST",
+        //   url: '/',
+        //   data: {name: "dafaq"},
+        //   success: function(data, status, xhr){},
+        //   datatype: 'json'
+        // });
       });
     }
   });
@@ -23,6 +31,7 @@ $(document).ready(function() {
       //popup: true,
       scope: ['user_read', 'channel_read']
     });
+   //{name: user.display_name});
   });
   
   // Display the navigation
@@ -91,6 +100,7 @@ $(document).ready(function() {
   $('#picker').keydown(function (e){
     if(e.keyCode === 13) {
       DemaciaTV.changeChannel(DemaciaTV.getFocus(), $(this).val());
+
     }
   });
 });

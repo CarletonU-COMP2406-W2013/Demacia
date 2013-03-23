@@ -65,9 +65,7 @@ AccountProvider.prototype.save = function(account, callback) {
     this.getCollection(function(error, account_collection) {
      	if( error ) callback(error)
     	else {
-        	account_collection.insert(account, function() {
-        		callback(null, account);
-        	});
+        	account_collection.insert(account);
     	} 
     });
 };
