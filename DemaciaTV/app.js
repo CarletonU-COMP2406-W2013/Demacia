@@ -44,23 +44,51 @@ app.configure('development', function(){
 });
 
 
+var server = http.createServer(app).listen(app.get('port'), function(){
+  console.log("Express server listening on port " + app.get('port'));
+});
 
-app.get('/', routes.index);
-app.post('/', function(req, res){
-  accountProvider.save({
-    name: req.body.name
+var io = require('socket.io').listen(server);
+//io.set('log level', 3);
+
+
+
+io.sockets.on('connection', function (socket) {
+  // Do login stuff here
+
+  socket.emit('news', { hello: 'world' });
+
+  socket.on('login', function (data){
+    console.log(data.name);
+    accountProvider.save(data);
   });
-  console.log("app.post('/') success [" + req.body.name +"]");
+
+  socket.on('my other event', function (data) {
+    console.log(data);
+  });
+  socket.on('start-watching', function (data) {
+    //mongo.save({channel: data.channel, starttime: Date.now()});
+  });
+  socket.on('stop-watching', function (data) {
+    //mongo.save({channel: data.channel, timeelapsed: Date.now() - oldchannel.starttime});
+  });
+  socket.on('disconnect', function (data) {
+    //Same stuff as stop-watching, plus logout
+  });
 });
 
 
-app.get('/get', function(req, res){
+
+
+app.get('/', routes.index);
+
+app.get('/db-manager', function(req, res){
     accountProvider.findAll(function(error,result){
-        res.render('get.jade', {title: "DB Contents", accounts: result});
+        res.render('db-manager.jade', {title: "DB Contents", accounts: result});
     });
 });
 
-app.post('/get', function(req,res){
+app.post('/db-manager', function(req,res){
   accountProvider.clearData();
   res.redirect('/post');
 });
@@ -70,19 +98,14 @@ app.get('/post', function(req, res) {
 });
 
 app.post('/post', function(req, res){
-  accountProvider.save({
-    name: res.param('input')
+  accountProvider.findByName(req.param('input'), function(error, result){
+    if(result == null)
+      accountProvider.save({
+        name: req.param('input')
+      });
   });
-  res.redirect('/get');
+  res.redirect('/db-manager');
 });
 
 
 app.get('/users', user.list);
-
-
-
-
-
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
-});

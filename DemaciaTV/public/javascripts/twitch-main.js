@@ -1,5 +1,14 @@
 $(document).ready(function() {
 
+  DemaciaTV.init();
+
+  DemaciaTV.getSocket().on('connection', function () {
+    DemaciaTV.getSocket().on('news', function (data){
+      console.log(data);
+    });
+    DemaciaTV.getSocket().on('disconnect', function (){});
+  });
+
   Twitch.init({clientId: 'j0yll37nxeynttp6x4jb9sj4d4v9ev3'}, function(error, status) {
     if (error) {
       // error encountered while loading
@@ -11,19 +20,16 @@ $(document).ready(function() {
       //$('.twitch-connect').hide()
       Twitch.api({method: 'user'}, function(error, user) {
         $('#connected').html('&nbsp;Connected as ' + user.display_name);
-        $.post('/', {name: user.display_name});
-        // $.ajax({
-        //   type: "POST",
-        //   url: '/',
-        //   data: {name: "dafaq"},
-        //   success: function(data, status, xhr){},
-        //   datatype: 'json'
-        // });
+        DemaciaTV.getSocket().emit('login', {name: user.display_name});
+
+
       });
     }
   });
-  
-  DemaciaTV.init();
+
+
+
+
 
   // Make the connect button work
   $('.twitch-connect').click(function() {
@@ -74,12 +80,10 @@ $(document).ready(function() {
   // Enable stream containers to accept stream dropping
   var indices = ['1', '2', '3', '4'];
   for(var i = 0; i < indices.length; i++) {
-    console.log(indices[i]);
     $('#stream-container_'+indices[i]).droppable({
       accept: '.stream-listing',
       drop: (function (i) {
         return function(event, ui){
-          console.log("Dropping " + ui.draggable.data('channel') + " on ID " + indices[i]);
           DemaciaTV.changeChannel(i, ui.draggable.data('channel'));
           DemaciaTV.setFocus(i);
         }
@@ -109,12 +113,14 @@ $(document).ready(function() {
 var DemaciaTV = (function () {
   // Private data goes here:
   var gamesList = {}
-    , streamsList = {}
+    , streamList = {}
     , headerSize = ''
     , footerSize = ''
     , chatSize = ''
     , focused = '1'
     , sidebarSize = '';
+
+  var socket;
 
   // Public data goes here:
   return {
@@ -124,6 +130,7 @@ var DemaciaTV = (function () {
       footerSize = $('#footer').css('height');
       chatSize = $('#chat-container').css('width');
       sidebarSize = $('#sidebar').css('width');
+      socket = io.connect('http://francislavoie.ca');
     },
 
     // Gets and displays a list of the top games being streamed
@@ -238,14 +245,19 @@ var DemaciaTV = (function () {
         $('#chat_'+ cindex).remove();
         $this.addStream(cindex, channel);
         $this.addChat(cindex, channel);
-        //$(window).resize();
+        streamList[cindex] = channel;
+        socket.emit('start-watching', {'channel': streamList[cindex]});
       });
     },
+
     
     removeChannel: function (cindex) {
       $('#stream-container_'+cindex).html('<div class="empty"><div class="empty2">'+ cindex +'</div></div>');
       $('#chat_'+cindex).remove();
+      socket.emit('stop-watching', {'channel': streamList[cindex]});
     },
+
+
 
     // Adds a new stream in the index slot
     addStream: function (cindex, channel) {
@@ -261,6 +273,7 @@ var DemaciaTV = (function () {
       $('#stream-container_'+cindex).data('mute', 'false');
     },
     
+
     // Adds a new chat in the index slot
     addChat: function (cindex, channel) {
       $('#chat-container').append('<iframe width="300px" height="100%" id="chat_'
@@ -347,6 +360,10 @@ var DemaciaTV = (function () {
           'top': '0'
         });
       }
+    },
+
+    getSocket: function() {
+      return socket;
     },
   };
 }());
