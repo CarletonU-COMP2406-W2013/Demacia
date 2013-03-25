@@ -49,7 +49,7 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 });
 
 var io = require('socket.io').listen(server);
-//io.set('log level', 3);
+io.set('log level', 2);
 
 
 
