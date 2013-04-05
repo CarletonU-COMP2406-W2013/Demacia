@@ -1,6 +1,10 @@
-extends layout
-
-block content
+doctype 5
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/user.css')
+    script(src='http://code.jquery.com/jquery-1.9.1.min.js')
+  body
   h1= title
   
   form( method="post")
@@ -10,3 +14,7 @@ block content
     - each account in accounts
         div.account
           div.title= account.name
+          - for (var stream in account.history)
+            div.title= '&nbsp;&nbsp;&nbsp;&nbsp;' + stream
+            div.title= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total views: ' + account.history[stream].viewCount
+            div.title= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total views: ' + (account.history[stream].viewTime/1000) + ' seconds'

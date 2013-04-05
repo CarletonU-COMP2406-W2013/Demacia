@@ -62,7 +62,8 @@ AccountProvider.prototype.findByName = function(n, callback) {
   });
 };
 
-AccountProvider.prototype.save = function(account, callback) {
+// Only adds a new user if there are none with this name already.
+AccountProvider.prototype.newUser = function(account, callback) {
   var that = this;
   that.getCollection(function(error, account_collection) {
     if( error ) callback(error)
@@ -76,5 +77,61 @@ AccountProvider.prototype.save = function(account, callback) {
   });
 };
 
+AccountProvider.prototype.startWatching = function(n, channel, callback) {
+  this.getCollection(function(error, account_collection) {
+    if( error ) callback(error);
+    else {
+      var modifier = { $set: {} };
+      modifier.$set['session.'+channel] = {startTime: Date.now()};
+      console.log(modifier);
+      account_collection.update({name: n}, modifier);
+    }
+  });
+}
+
+AccountProvider.prototype.stopWatching = function(n, channel, callback) {
+  var that = this;
+  this.getCollection(function(error, account_collection) {
+    if( error ) callback(error);
+    else {
+      that.findByName(n, function(error, result) {
+        if(result.session.hasOwnProperty(channel)) {
+          var timeElapsed = Date.now() - result.session[channel].startTime;
+          console.log('Time watched for ' + channel + ': ' + timeElapsed + 'ms');
+
+          var totalViewCount = 1, totalViewTime = timeElapsed;
+          if(result.hasOwnProperty('history')){
+            if(result.history.hasOwnProperty(channel)){
+              totalViewCount += result.history[channel].viewCount;
+              totalViewTime += result.history[channel].viewTime;
+            }
+          }
+          var modifier = { $set: {}, $unset: {} };
+          modifier.$set['history.'+channel] = {viewTime: totalViewTime, viewCount: totalViewCount};
+          modifier.$unset['session.'+channel] = "";
+          console.log(modifier);
+          
+          account_collection.update({name: n}, modifier);
+        }
+      });
+    }
+  });
+}
+
+AccountProvider.prototype.stopWatchingAll = function(n, callback) {
+  var that = this;
+  this.getCollection(function(error, account_collection) {
+    if( error ) callback(error);
+    else {
+      that.findByName(n, function(error, result) {
+        for(var stream in result.session) {
+          if (result.session.hasOwnProperty(stream)) {
+            that.stopWatching(n, stream);
+          }
+        }
+      });
+    }
+  });
+}
 
 exports.AccountProvider = AccountProvider;

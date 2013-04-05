@@ -34,6 +34,7 @@ app.configure(function(){
 
 function compile(str, path) {
   return stylus(str)
+
     .set('filename', path)
     .set('compress', true)
     .use(nib());
@@ -60,21 +61,28 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('login', function (data){
     console.log(data.name);
-    accountProvider.save(data);
+    var username = data.name;
+    accountProvider.newUser(data);
+
+    socket.on('start-watching', function (data) {
+      console.log(data.channel);
+      accountProvider.startWatching(username, data.channel);
+    });
+    socket.on('stop-watching', function (data) {
+      console.log('Stop Watching: ' + data.channel);
+      accountProvider.stopWatching(username, data.channel);
+    });
+
+    socket.on('disconnect', function (data) {
+      accountProvider.stopWatchingAll(username);
+    });
+
   });
 
   socket.on('my other event', function (data) {
     console.log(data);
   });
-  socket.on('start-watching', function (data) {
-    //mongo.save({channel: data.channel, starttime: Date.now()});
-  });
-  socket.on('stop-watching', function (data) {
-    //mongo.save({channel: data.channel, timeelapsed: Date.now() - oldchannel.starttime});
-  });
-  socket.on('disconnect', function (data) {
-    //Same stuff as stop-watching, plus logout
-  });
+
 });
 
 
@@ -84,6 +92,8 @@ app.get('/', routes.index);
 
 app.get('/db-manager', function(req, res){
     accountProvider.findAll(function(error,result){
+        for(item in result)
+          console.log(result[item]);
         res.render('db-manager.jade', {title: "DB Contents", accounts: result});
     });
 });
@@ -100,7 +110,7 @@ app.get('/post', function(req, res) {
 app.post('/post', function(req, res){
   accountProvider.findByName(req.param('input'), function(error, result){
     if(result == null)
-      accountProvider.save({
+      accountProvider.newUser({
         name: req.param('input')
       });
   });

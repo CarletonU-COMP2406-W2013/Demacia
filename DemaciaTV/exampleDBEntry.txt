@@ -1,45 +1,47 @@
 {
-
-	name: "MaxGhost",
+	name: MaxGhost,
 	session: {
-		"LethalFrag": {
+		LethalFrag: {
 			startTime: 84710934781902347
+		},
+		riotgames: {
+			startTime: 123412341234
 		}
 	},
 	history: {
-		"LethalFrag": {
-			viewcount: 234,
-			viewtime: 123080192347
+		LethalFrag: {
+			viewCount: 234,
+			viewTime: 123080192347
 		},
-		"RiotGames": {
-			viewcount: 234,
-			viewtime: 123080192347
+		riotgames: {
+			viewCount: 1,
+			viewTime: 123080192347
 		},
-		"lagtvmaximusblack": {
-			viewcount: 234,
-			viewtime: 123080192347
+		lagtvmaximusblack: {
+			viewCount: 234,
+			viewTime: 123080192347
 		}
 	}
 },
 {
-	name: "NoTactics",
+	name: NoTactics,
 	session: {
-		"LethalFrag": {
+		LethalFrag: {
 			startTime: 84710934781902347
 		}
 	},
 	history: {
-		"LethalFrag": {
-			viewcount: 234,
-			viewtime: 123080192347
+		LethalFrag: {
+			viewCount: 234,
+			viewTime: 123080192347
 		},
-		"RiotGames": {
-			viewcount: 234,
-			viewtime: 123080192347
+		RiotGames: {
+			viewCount: 234,
+			viewTime: 123080192347
 		},
-		"lagtvmaximusblack": {
-			viewcount: 234,
-			viewtime: 123080192347
+		lagtvmaximusblack: {
+			viewCount: 234,
+			viewTime: 123080192347
 		}
 	}
 }

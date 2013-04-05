@@ -129,6 +129,7 @@ var DemaciaTV = (function () {
       headerSize = $('#header').css('height');
       footerSize = $('#footer').css('height');
       chatSize = $('#chat-container').css('width');
+
       sidebarSize = $('#sidebar').css('width');
       socket = io.connect('http://francislavoie.ca');
     },
@@ -149,6 +150,7 @@ var DemaciaTV = (function () {
         $this.displayStreams(streams);
       });
     },
+    
 
     // Takes a Twitch API 'games' object and displays the list on the page 
     displayGames: function (games) {
@@ -233,6 +235,7 @@ var DemaciaTV = (function () {
     
     // Changes the channel at cindex
     changeChannel: function (cindex, channel) {
+      this.removeChannel(cindex);
       $this = this;
       Twitch.api({method: 'users/' + channel}, function(error, user){
         if(error){
@@ -254,7 +257,9 @@ var DemaciaTV = (function () {
     removeChannel: function (cindex) {
       $('#stream-container_'+cindex).html('<div class="empty"><div class="empty2">'+ cindex +'</div></div>');
       $('#chat_'+cindex).remove();
-      socket.emit('stop-watching', {'channel': streamList[cindex]});
+      if(streamList[cindex])
+        socket.emit('stop-watching', {'channel': streamList[cindex]});
+      streamList[cindex] = "";
     },
 
 
