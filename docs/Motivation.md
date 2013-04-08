@@ -1,3 +1,5 @@
+# Motivation
+
 Our idea for the project came from our love of videogames and esports. Both of us enjoyed watching professional gamers stream. There was inherent problems in viewing multiple streams concurrently. The user has to keep switching between streams manually by either alt-tabbing or clicking on each page. Also, the user had to manually click the mute button on each of the streams that he/she was not watching which added to the frustration of viewing multiple streams. We wanted to find a way for stream viewers to watch multiple streams without the frustration that comes from managing each stream individually (using multiple pages and the mouse for stream manipulations). 
 
 The most common use-case for watching multiple streams is during large esports tournaments like [MLG (Major League Gaming)](http://www.majorleaguegaming.com/), which often has multiple streams running at the same time for different games or even for the same game during bracket stages. Our intent for our web application would be to facilitate watching such tournaments and make the viewing experience much easier and simpler.
