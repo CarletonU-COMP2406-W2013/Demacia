@@ -3,7 +3,9 @@
 ### Francis Lavoie - 100819112
 ### Mark Murillo - 100835344
 ## Application Description
-Our web application “DemaciaTV” is a multi-stream browser for TwitchTV. DemaciaTV adds keyboard hotkey functionality for fast stream manipulations (fullscreen modes, mute, hide/show chat/stream browser) to make viewing multiple streams easy and seamless. Also, our web app features 
+Our web application “DemaciaTV” is a multi-stream browser for TwitchTV. DemaciaTV adds keyboard hotkey functionality for fast stream manipulations (fullscreen modes, mute, hide/show chat/stream browser) to make viewing multiple streams easy and seamless.
+
+*On a side note, one can view the statistics of each account logged into the application by going directly to the /db-manager page. Although this functionality is not meant for users, it is still interesting to see the different statistics for each account that the application keeps track of. Future implementation will be that the user can only view his statistics by clicking on his name when logged in.
 ## Application Controls
 <table>
   <tr>
