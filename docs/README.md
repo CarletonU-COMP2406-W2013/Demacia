@@ -43,7 +43,7 @@ Our web application “DemaciaTV” is a multi-stream browser for TwitchTV. Dema
 		<td>Toggle the navigation sidebar</td>
 	</tr>
 	<tr>
-		<td>Right&nbsp;&nbsp;</td>
+		<td>Right</td>
 		<td>Toggle the chat sidebar</td>
 	</tr>
 </table>
