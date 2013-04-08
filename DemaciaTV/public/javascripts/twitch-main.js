@@ -191,17 +191,13 @@ var DemaciaTV = (function () {
         });
       });
     },
-
-    // Toggles the sound of a stream
-    toggleSound: function (cindex) {
-      ($('#stream-container_'+cindex).data('mute') === 'true') ? this.unmute(cindex) : this.mute(cindex);
-    },
     
     // Gives focus to a specific stream
     // - Mutes all other streams 
     // - Unmutes the focused stream
     // - Brings to front the focused chat
     setFocus: function (cindex) {
+      var alreadyfocused = (focused === cindex);
       focused = cindex;
       var indices = ['1', '2', '3', '4'];
       for(var i = 0; i < indices.length; i++) {
@@ -211,12 +207,18 @@ var DemaciaTV = (function () {
         $('#chat_'+indices[i]).hide();
       }
       $('#stream-container_'+cindex).css('z-index', '10');
-      this.unmute(cindex);
+      if(alreadyfocused) this.toggleSound(cindex);
+      else this.unmute(cindex);
       $('#chat_'+cindex).show();
     },
     
     getFocus: function () {
       return focused;
+    },
+
+    // Toggles the sound of a stream
+    toggleSound: function (cindex) {
+      ($('#stream-container_'+cindex).data('mute') === 'true') ? this.unmute(cindex) : this.mute(cindex);
     },
 
     // Mutes a specific stream
