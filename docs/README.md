@@ -4,9 +4,9 @@
 ### Mark Murillo - 100835344
 
 ## Documentation
-### [Dependencies](https://github.com/CarletonU-COMP2406-W2013/Demacia/blob/master/docs/Dependencies.md)
-### [Files](https://github.com/CarletonU-COMP2406-W2013/Demacia/blob/master/docs/Files.md)
-### [Motivation](https://github.com/CarletonU-COMP2406-W2013/Demacia/blob/master/docs/Motivation.md)
+* ### [Dependencies](https://github.com/CarletonU-COMP2406-W2013/Demacia/blob/master/docs/Dependencies.md)
+* ### [Files](https://github.com/CarletonU-COMP2406-W2013/Demacia/blob/master/docs/Files.md)
+* ### [Motivation](https://github.com/CarletonU-COMP2406-W2013/Demacia/blob/master/docs/Motivation.md)
 
 ## Application Description
 Our web application “DemaciaTV” is a multi-stream browser for TwitchTV. DemaciaTV adds keyboard hotkey functionality for fast stream manipulations (fullscreen modes, mute, hide/show chat/stream browser) which makes viewing multiple streams easy and seamless. The user can browse the different streams by navigating the left sidebar and drag a specific stream to a specific stream container. Alternatively, the user can click on the stream which automatically adds it to the currently focused stream container (containers 1-4).
