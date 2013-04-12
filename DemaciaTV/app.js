@@ -5,7 +5,6 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
   , stylus = require('stylus')
@@ -118,4 +117,4 @@ app.post('/post', function(req, res){
 });
 
 
-app.get('/users', user.list);
+//app.get('/users', user.list);
