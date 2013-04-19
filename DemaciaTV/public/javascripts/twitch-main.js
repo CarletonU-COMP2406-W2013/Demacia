@@ -2,14 +2,15 @@ $(document).ready(function() {
 
   DemaciaTV.init();
 
-  DemaciaTV.getSocket().on('connection', function () {
-    DemaciaTV.getSocket().on('news', function (data){
+  DemaciaTV.getSocketIO().on('connection', function () {
+    DemaciaTV.getSocketIO().on('news', function (data){
       console.log(data);
     });
-    DemaciaTV.getSocket().on('disconnect', function (){});
+    DemaciaTV.getSocketIO().on('disconnect', function (){});
   });
 
-  Twitch.init({clientId: 'j0yll37nxeynttp6x4jb9sj4d4v9ev3'}, function(error, status) {
+  var clientid = (document.domain !== "demacia.tv") ? 'j0yll37nxeynttp6x4jb9sj4d4v9ev3' : 'fefe576hz482zz8rkx34x5cwxy2y0s';
+  Twitch.init({clientId: clientid}, function(error, status) {
     if (error) {
       // error encountered while loading
       console.log(error);
@@ -20,54 +21,27 @@ $(document).ready(function() {
       //$('.twitch-connect').hide()
       Twitch.api({method: 'user'}, function(error, user) {
         $('#connected').html('&nbsp;Connected as ' + user.display_name);
-        DemaciaTV.getSocket().emit('login', {name: user.display_name});
-
-
+        DemaciaTV.getSocketIO().emit('login', {name: user.display_name});
       });
     }
   });
 
-
-
-
-
   // Make the connect button work
-  $('.twitch-connect').click(function() {
-    Twitch.login({
-      //popup: true,
-      scope: ['user_read', 'channel_read']
-    });
-   //{name: user.display_name});
-  });
+  $('.twitch-connect').click(function() { Twitch.login({ scope: ['user_read', 'channel_read'] }); });
   
   // Display the navigation
-  $('#sidebar-data').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
   DemaciaTV.getTopGames(25);
 
-  // Add the default stream and chat
-  // DemaciaTV.addStream('1', 'riotgames');
-  // DemaciaTV.addChat('1', 'riotgames');
-  // DemaciaTV.addStream('2', 'dreamhacktv');
-  // DemaciaTV.addChat('2', 'dreamhacktv');
-
-  // Dynamic stream size
-  // $(window).resize(function() {
-  //   var content = $('#content');
-  //   $('#stream_1').width(content.width());
-  //   $('#stream_1').height(content.height());
-  //   //$('#stream_1').height(Math.min(content.width()/1.7777777777 + 30, content.height()));
-  // }).resize();
-
-  // Sound hotkeys
-  $(document).bind('keydown', '1', function() { DemaciaTV.setFocus('1'); });
-  $(document).bind('keydown', '2', function() { DemaciaTV.setFocus('2'); });
-  $(document).bind('keydown', '3', function() { DemaciaTV.setFocus('3'); });
-  $(document).bind('keydown', '4', function() { DemaciaTV.setFocus('4'); });
-  $(document).bind('keydown', 'f', function() { DemaciaTV.toggleFullscreen(); });
-  $(document).bind('keydown', 'g', function() { DemaciaTV.toggleStreamFill(); });
-  $(document).bind('keydown', 'left', function() { DemaciaTV.toggleSidebar(); });
+  // Hotkeys
+  $(document).bind('keydown', '1',     function() { DemaciaTV.setFocus('1'); });
+  $(document).bind('keydown', '2',     function() { DemaciaTV.setFocus('2'); });
+  $(document).bind('keydown', '3',     function() { DemaciaTV.setFocus('3'); });
+  $(document).bind('keydown', '4',     function() { DemaciaTV.setFocus('4'); });
+  $(document).bind('keydown', 'f',     function() { DemaciaTV.toggleFullscreen(); });
+  $(document).bind('keydown', 'g',     function() { DemaciaTV.toggleStreamFill(); });
+  $(document).bind('keydown', 'left',  function() { DemaciaTV.toggleSidebar(); });
   $(document).bind('keydown', 'right', function() { DemaciaTV.toggleChat(); });
-  $(document).bind('keydown', 'd', function() { DemaciaTV.removeChannel(DemaciaTV.getFocus()); });
+  $(document).bind('keydown', 'd',     function() { DemaciaTV.removeChannel(DemaciaTV.getFocus()); });
 
   // Hide streams
   // $('p.stream-controls').append('<a href="javascript:void(0)" id="streamtoggle"> Toggle stream</a>');
@@ -86,6 +60,7 @@ $(document).ready(function() {
         return function(event, ui){
           DemaciaTV.changeChannel(i, ui.draggable.data('channel'));
           DemaciaTV.setFocus(i);
+          $('.ui-draggable-dragging').remove();
         }
       })(indices[i])
     });
@@ -101,18 +76,14 @@ $(document).ready(function() {
   $('#sidebar-toggle-right').click(DemaciaTV.toggleSidebar);
 
   // Change stream on enter key in the text box
-  $('#picker').keydown(function (e){
-    if(e.keyCode === 13) {
-      DemaciaTV.changeChannel(DemaciaTV.getFocus(), $(this).val());
-
-    }
-  });
+  $('#picker').keydown(function (e){ if(e.keyCode === 13) DemaciaTV.changeChannel(DemaciaTV.getFocus(), $(this).val()); });
 });
 
 
 var DemaciaTV = (function () {
   // Private data goes here:
   var gamesList = {}
+    , currentGame = ''
     , streamList = {}
     , headerSize = ''
     , footerSize = ''
@@ -120,7 +91,7 @@ var DemaciaTV = (function () {
     , focused = '1'
     , sidebarSize = '';
 
-  var socket;
+  var socketio;
 
   // Public data goes here:
   return {
@@ -131,12 +102,13 @@ var DemaciaTV = (function () {
       chatSize = $('#chat-container').css('width');
 
       sidebarSize = $('#sidebar').css('width');
-      socket = io.connect('http://francislavoie.ca');
+      socketio = io.connect('http://' + document.domain);
     },
 
     // Gets and displays a list of the top games being streamed
     getTopGames: function (amount) {
       $this = this;
+      $('#sidebar-data').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
       Twitch.api({method: 'games/top', params: {limit: amount}}, function (error, games) {
         $this.displayGames(games);
         $this.gamesList = games;
@@ -146,20 +118,24 @@ var DemaciaTV = (function () {
     // Gets and displays a list of the top streams for a game
     getTopStreamsOfGame: function (game, amount) {
       $this = this;
+      $('#sidebar-data').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
       Twitch.api({method: 'streams', params: {game: game, limit: amount}}, function (error, streams) {
         $this.displayStreams(streams);
+        $this.currentGame = game;
       });
     },
     
 
     // Takes a Twitch API 'games' object and displays the list on the page 
     displayGames: function (games) {
-      $('#sidebar-data').html('');
       $this = this;
+      $('#sidebar-data').html('<p id="nav_reload_games" class="stream-listing" align="center"><a href="javascript:void(0)">Reload List</a></p>');
+      $('#nav_reload_games').click(function() { $this.getTopGames(25); });
       $.each(games.top, function(index, value) {
-        $('#sidebar-data').append('<div id="nav_game_'+(index+1)+'" class="stream-listing"><img src="' + value.game.logo.small + '" height="36" width="60" /><p>#'+(index+1)+' <a href="javascript:void(0)" title="'+value.game.name+'">'+value.game.name+'</a><br />Viewers: '+ value.viewers +'</p></div>');
+        $('#sidebar-data').append('<div id="nav_game_'+(index+1)+'" class="stream-listing"><img src="' +
+         value.game.logo.small + '" height="36" width="60" /><p>#'+(index+1)+' <a href="javascript:void(0)" title="'+
+         value.game.name+'">'+value.game.name+'</a><br />Viewers: '+ value.viewers +'</p></div>');
         $('#nav_game_'+(index+1)).click(function () {
-          $('#sidebar-data').html('<img src="images/ajax_loader.gif" class="ajax-loader" />');
           $this.getTopStreamsOfGame(value.game.name, 25);
         });
       });
@@ -167,14 +143,23 @@ var DemaciaTV = (function () {
 
     // Takes a Twitch API 'streams' object and displays the list on the page 
     displayStreams: function (streams) {
-      $('#sidebar-data').html('<p id="nav_back" class="stream-listing" align="center"><a href="javascript:void(0)">Back</a></p>');
-      $('#nav_back').click(function() { $this.displayGames($this.gamesList); });
       $this = this;
+      $('#sidebar-data').html('<p id="nav_back" class="stream-listing" align="center"><a href="javascript:void(0)">Back</a></p>' +
+        '<p id="nav_reload_streams" class="stream-listing" align="center"><a href="javascript:void(0)">Reload List</a></p>');
+      $('#nav_back').click(function() { $this.displayGames($this.gamesList); });
+      $('#nav_reload_streams').click(function() { $this.getTopStreamsOfGame($this.currentGame, 25); });
+      
       $.each(streams.streams, function(index, value) {
-        $('#sidebar-data').append('<div id="nav_stream_'+(index+1)+'" class="stream-listing"><img src="' + value.preview.medium.replace("320x200", "60x36") + '" height="36" width="60" /><p>#'+(index+1)+' <a href="javascript:void(0)" title="'+value.channel.status+'">'+value.channel.display_name+'</a><br />Viewers: '+ value.viewers +'</p></div>');
+
+        $('#sidebar-data').append('<div id="nav_stream_' + (index+1) +
+          '" class="stream-listing"><img src="' + 
+          value.preview.medium.replace("320x200", "60x36") + 
+          '" height="36" width="60" /><p>#'+ (index+1) +
+          ' <a href="javascript:void(0)" title="'+value.channel.status+'">'+
+          value.channel.display_name + '</a><br />Viewers: '+ value.viewers +'</p></div>');
+
         $('#nav_stream_'+(index+1)).data('channel', value.channel.name);
         $('#nav_stream_'+(index+1)).click(function () {
-          //$this.displayGames($this.gamesList);
           $this.changeChannel(focused, value.channel.name);
         });
 
@@ -251,7 +236,7 @@ var DemaciaTV = (function () {
         $this.addStream(cindex, channel);
         $this.addChat(cindex, channel);
         streamList[cindex] = channel;
-        socket.emit('start-watching', {'channel': streamList[cindex]});
+        socketio.emit('start-watching', {'channel': streamList[cindex]});
       });
     },
 
@@ -260,7 +245,7 @@ var DemaciaTV = (function () {
       $('#stream-container_'+cindex).html('<div class="empty"><div class="empty2">'+ cindex +'</div></div>');
       $('#chat_'+cindex).remove();
       if(streamList[cindex])
-        socket.emit('stop-watching', {'channel': streamList[cindex]});
+        socketio.emit('stop-watching', {'channel': streamList[cindex]});
       streamList[cindex] = "";
     },
 
@@ -369,8 +354,8 @@ var DemaciaTV = (function () {
       }
     },
 
-    getSocket: function() {
-      return socket;
+    getSocketIO: function() {
+      return socketio;
     },
   };
 }());
